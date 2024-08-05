@@ -53,6 +53,9 @@ public class GameManager : Singleton<GameManager>
         scoreTextUI = FindAnyObjectByType<ScoreText>();
 
         lifePanelUI = FindAnyObjectByType<LifePanel>();
-        lifePanelUI.OnInitialize();     // 플레이어를 찾은 이후에 실행되어야 함
+        if (lifePanelUI != null)
+        {
+            lifePanelUI.OnInitialize();     // 플레이어를 찾은 이후에 실행되어야 함
+        }
     }
 }
