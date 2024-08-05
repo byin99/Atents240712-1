@@ -30,24 +30,14 @@ public class Player : MonoBehaviour
     public float fireAngle = 30.0f;
 
     /// <summary>
+    /// 맞았을 때 무적 기간
+    /// </summary>
+    public float invincibleDuration = 2.0f;
+
+    /// <summary>
     /// 입력된 방향
     /// </summary>
     Vector3 inputDirection = Vector3.zero;
-
-    /// <summary>
-    /// 입력용 인풋 액션
-    /// </summary>
-    PlayerInputActions inputActions;
-
-    /// <summary>
-    /// 애니메이터 컴포넌트를 저장할 변수
-    /// </summary>
-    Animator animator;
-
-    /// <summary>
-    /// 애니메이터용 해시 만들기
-    /// </summary>
-    readonly int InputY_String = Animator.StringToHash("InputY");
 
     /// <summary>
     /// 총알 발사용 트랜스폼의 배열
@@ -95,9 +85,39 @@ public class Player : MonoBehaviour
     const int StartLife = 3;
 
     /// <summary>
+    /// 무적 레이어의 번호
+    /// </summary>
+    int invincibleLayer;
+
+    /// <summary>
+    /// 플레이어 레이어의 번호
+    /// </summary>
+    int playerLayer;
+
+    /// <summary>
+    /// 입력용 인풋 액션
+    /// </summary>
+    PlayerInputActions inputActions;
+
+    /// <summary>
+    /// 애니메이터용 해시 만들기
+    /// </summary>
+    readonly int InputY_String = Animator.StringToHash("InputY");
+
+    /// <summary>
+    /// 애니메이터 컴포넌트를 저장할 변수
+    /// </summary>
+    Animator animator;
+
+    /// <summary>
     /// 리지드바디 컴포넌트
     /// </summary>
     Rigidbody2D rigid;
+
+    /// <summary>
+    /// 스프라이트 랜더러 컴포넌트
+    /// </summary>
+    SpriteRenderer spriteRenderer;
 
     /// <summary>
     /// Power 확인 및 설정용 프로퍼티
@@ -170,6 +190,7 @@ public class Player : MonoBehaviour
 
         animator = GetComponent<Animator>();        // 자신과 같은 게임오브젝트 안에 있는 컴포넌트 찾기        
         rigid = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         Transform fireRoot = transform.GetChild(0);     // 첫번째 자식 찾기
         fireTransform = new Transform[fireRoot.childCount];
@@ -186,6 +207,9 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        invincibleLayer = LayerMask.NameToLayer("Invincible");
+        playerLayer = LayerMask.NameToLayer("Player");
+
         Power = 1;
         Life = StartLife;   // 생명 초기화(UI와 연계가 있어서 Start에서 실행)
     }
@@ -375,6 +399,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void OnHit()
     {
+        Debug.Log("Hit");
+
         Power--;
 
         // 일정 시간 무적이 되기
@@ -382,8 +408,39 @@ public class Player : MonoBehaviour
         // 2. 보더와는 부딪친다.
         // 3. 무적 기간동안 깜박거린다.(코드로 진행)
 
-        // 예시) 레이어번호 찾고 적용하기 
-        // gameObject.layer = LayerMask.NameToLayer("레이어이름");
+        // 예시) Invincible 레이어번호 찾고 적용하기 
+        // gameObject.layer = LayerMask.NameToLayer("Invincible");
+
+        StartCoroutine(InvincibleMode());
+    }
+
+    IEnumerator InvincibleMode()
+    {
+        gameObject.layer = invincibleLayer;         // 무적 레이어로 변경
+
+        float timeElapsed = 0.0f;
+        while(timeElapsed < invincibleDuration)     // invincibleDuration초 동안 반복
+        {
+            timeElapsed += Time.deltaTime;
+
+            // 깜박이기
+
+            //Mathf.Cos(timeElapsed); // 1 -> -1 -> 1
+            //Mathf.Cos(timeElapsed) + 1.0f;  // 2 -> 0 -> 2
+            //(Mathf.Cos(timeElapsed) + 1.0f) * 0.5f; // 1 -> 0 -> 1
+
+            //Mathf.Deg2Rad;    // 곱하면 Degree가 Radian이 된다.
+            //Mathf.Rad2Deg;    // 곱하면 Radian이 Degree가 된다.
+
+            // 30.0f는 깜박이는 속도 증폭용
+            float alpha = (Mathf.Cos(timeElapsed * 30.0f) + 1.0f) * 0.5f;
+            spriteRenderer.color = new Color(1, 1, 1, alpha);
+
+            yield return null;  // 다음 프레임까지 대기
+        }
+
+        gameObject.layer = playerLayer;             // 플레이어 레이어로 복구
+        spriteRenderer.color = Color.white;         // 알파값도 복구
     }
 
     /// <summary>
