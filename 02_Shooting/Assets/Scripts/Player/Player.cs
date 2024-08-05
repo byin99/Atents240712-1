@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 현재 생명
     /// </summary>
-    int life = 3;
+    int life = 0;
 
     /// <summary>
     /// 초기 생명
@@ -248,8 +248,11 @@ public class Player : MonoBehaviour
         // 항상 일정 시간 간격(Time.fixedDeltaTime)으로 호출된다.
         // Debug.Log(Time.fixedDeltaTime);
 
-        // transform.Translate(Time.fixedDeltaTime * moveSpeed * inputDirection);   // 한번은 파고 들어간다.
-        rigid.MovePosition(rigid.position + Time.fixedDeltaTime * moveSpeed * (Vector2)inputDirection);
+        if( IsAlive )
+        {
+            // transform.Translate(Time.fixedDeltaTime * moveSpeed * inputDirection);   // 한번은 파고 들어간다.
+            rigid.MovePosition(rigid.position + Time.fixedDeltaTime * moveSpeed * (Vector2)inputDirection);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -448,7 +451,38 @@ public class Player : MonoBehaviour
     /// </summary>
     private void OnDie()
     {
-        
+        //Debug.Log("Die");
+
+        // 더 이상 충돌이 일어나지 않게 컬라이더 끄기
+        Collider2D body = GetComponent<Collider2D>();
+        body.enabled = false;
+
+        Factory.Instance.GetExplosion(transform.position);  // 터지는 이팩트
+                
+        inputActions.Player.Disable();      // 입력 정지. 플레이어 액션맵 비활성화
+
+        // 튕겨나오는 듯한 연출 추가(빙글빙글 돌면서 뒤로 날아간다.)
+        rigid.gravityScale = 1.0f;                                      // 중력 적용하기
+        rigid.freezeRotation = false;                                   // 회전 막아놓았던 것을 풀기
+        rigid.AddTorque(30, ForceMode2D.Impulse);                       // 회전력 추가하기
+        rigid.AddForce(new Vector2(-2, 1) * 5, ForceMode2D.Impulse);    // 왼쪽 대각선 위로 날리기
     }
+
+#if UNITY_EDITOR
+    public void TestLifeUp()
+    {
+        Life++;
+    }
+
+    public void TestLifeDown()
+    {
+        Life--;
+    }
+
+    public void TestDeath()
+    {
+        Life = 0;
+    }
+#endif
 
 }
