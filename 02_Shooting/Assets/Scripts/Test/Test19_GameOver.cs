@@ -46,5 +46,11 @@ public class Test19_GameOver : TestBase
         RankPanel panel = FindFirstObjectByType<RankPanel>();
         panel.Test_DefaultRankPanel();
     }
+
+    protected override void OnTest5(InputAction.CallbackContext context)
+    {
+        RankPanel panel = FindFirstObjectByType<RankPanel>();
+        panel.Test_UpdateRankPanel(score);
+    }
 #endif
 }
