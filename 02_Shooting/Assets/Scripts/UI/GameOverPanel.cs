@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class GameOverPanel : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    Animator animator;
+
+    private void Awake()
     {
-        
+        animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnInitialize()
     {
-        
+        Player player = GameManager.Instance.Player;
+        player.onDie += () => animator.SetTrigger("GameOver");  // 람다식으로 트리거 발동
     }
 }

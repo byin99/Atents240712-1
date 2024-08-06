@@ -20,6 +20,11 @@ public class GameManager : Singleton<GameManager>
     LifePanel lifePanelUI;
 
     /// <summary>
+    /// 게임 오버 표시,랭킹 표시, 재시작버튼 용 패널
+    /// </summary>
+    GameOverPanel gameOverPanelUI;
+
+    /// <summary>
     /// 씬에 있는 플레이어에 접근하기 위한 프로퍼티(읽기전용)
     /// </summary>
     public Player Player
@@ -56,6 +61,12 @@ public class GameManager : Singleton<GameManager>
         if (lifePanelUI != null)
         {
             lifePanelUI.OnInitialize();     // 플레이어를 찾은 이후에 실행되어야 함
+        }
+
+        gameOverPanelUI = FindAnyObjectByType<GameOverPanel>();
+        if(gameOverPanelUI != null)
+        {
+            gameOverPanelUI.OnInitialize(); // 플레이어를 찾은 이후에 실행되어야 함
         }
     }
 }

@@ -183,6 +183,11 @@ public class Player : MonoBehaviour
     /// </summary>
     public Action<int> onLifeChange;
 
+    /// <summary>
+    /// 죽었음을 알리는 델리게이트
+    /// </summary>
+    public Action onDie;
+
 
     private void Awake()
     {
@@ -466,6 +471,8 @@ public class Player : MonoBehaviour
         rigid.freezeRotation = false;                                   // 회전 막아놓았던 것을 풀기
         rigid.AddTorque(30, ForceMode2D.Impulse);                       // 회전력 추가하기
         rigid.AddForce(new Vector2(-2, 1) * 5, ForceMode2D.Impulse);    // 왼쪽 대각선 위로 날리기
+
+        onDie?.Invoke();    // 죽었음을 알림
     }
 
 #if UNITY_EDITOR
