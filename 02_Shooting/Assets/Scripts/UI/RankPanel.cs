@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -27,6 +28,11 @@ public class RankPanel : MonoBehaviour
     int[] highRecords;
 
     /// <summary>
+    /// null이 아니면 직전에 랭킹이 업데이트 된 인덱스
+    /// </summary>
+    int? updatedIndex = null;
+
+    /// <summary>
     /// 랭킹 표시되는 사람 수
     /// </summary>
     const int MaxRankings = 5;
@@ -38,6 +44,24 @@ public class RankPanel : MonoBehaviour
         highRecords = new int[MaxRankings];
 
         inputField = GetComponentInChildren<TMP_InputField>(true);  // 비활성화 되어있는 컴포넌트를 찾으려면 파라메터를 true로 해야 한다.
+        inputField.onEndEdit.AddListener(OnNameInputEnd);   // onEndEdit의 발동여부를 확인할 함수 등록(=onEndEdit 이벤트가 발동할 때 실행될 함수 추가)
+    }
+
+    /// <summary>
+    /// inputField.onEndEdit 이벤트가 발동되었을 때 실행될 함수
+    /// </summary>
+    /// <param name="inputText">inputField에 입력이 완료되었을 때의 입력 내용</param>
+    private void OnNameInputEnd(string inputText)
+    {
+        //Debug.Log(inputText);
+
+        inputField.gameObject.SetActive(false);     // 인풋필드 비활성화
+        if(updatedIndex != null)
+        {
+            rankers[updatedIndex.Value] = inputText;    // 이름 변경
+            RefreshRankLines();
+            updatedIndex = null;
+        }
     }
 
     /// <summary>
@@ -96,10 +120,12 @@ public class RankPanel : MonoBehaviour
 
                 rankers[i] = "새 랭커";                        // 새 랭커이름과 점수 기록하기
                 highRecords[i] = score;
+                updatedIndex = i;                               // 업데이트된 인덱스 저장하기
 
                 Vector3 pos = inputField.transform.position;    // 등수에 맞게 위치 이동
                 pos.y = rankLines[i].transform.position.y;
                 inputField.transform.position = pos;
+                inputField.text = string.Empty;                 // 인풋필드 내용 비우기
                 inputField.gameObject.SetActive(true);          // 인풋필드 보이게 만들기
 
                 RefreshRankLines(); // 화면 갱신
