@@ -770,7 +770,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: -1
   score: 12345
-  isStartDie: 0
+  isStartDie: 1
 --- !u!4 &956229012
 Transform:
   m_ObjectHideFlags: 0

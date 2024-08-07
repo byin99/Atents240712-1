@@ -82,6 +82,15 @@ public class ScoreText : MonoBehaviour
     }
 
     /// <summary>
+    /// 초기화 함수
+    /// </summary>
+    public void OnInitialize()
+    {
+        Score = 0;
+        score.text = $"0";
+    }
+
+    /// <summary>
     /// 점수를 증가시키는 함수
     /// </summary>
     /// <param name="point">증가시킬 양</param>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,6 +38,11 @@ public class RankPanel : MonoBehaviour
     /// </summary>
     const int MaxRankings = 5;
 
+    /// <summary>
+    /// 세이브 파일 이름
+    /// </summary>
+    const string SaveFileName = "Save.json";
+
     private void Awake()
     {
         rankLines = GetComponentsInChildren<RankLine>();
@@ -45,6 +51,12 @@ public class RankPanel : MonoBehaviour
 
         inputField = GetComponentInChildren<TMP_InputField>(true);  // 비활성화 되어있는 컴포넌트를 찾으려면 파라메터를 true로 해야 한다.
         inputField.onEndEdit.AddListener(OnNameInputEnd);   // onEndEdit의 발동여부를 확인할 함수 등록(=onEndEdit 이벤트가 발동할 때 실행될 함수 추가)
+    }
+
+    private void Start()
+    {
+        LoadRankData();     // 랭크 정보 불러오기        
+        GameManager.Instance.Player.onDie += () => UpdataRankData(GameManager.Instance.Score);  // 플레이어가 죽으면 랭킹 업데이트 시도
     }
 
     /// <summary>
@@ -60,6 +72,7 @@ public class RankPanel : MonoBehaviour
         {
             rankers[updatedIndex.Value] = inputText;    // 이름 변경
             RefreshRankLines(updatedIndex.Value);       // 패널 화면 갱신
+            SaveRankData();                             // 랭킹 정보 저장
             updatedIndex = null;
         }
     }
@@ -143,14 +156,61 @@ public class RankPanel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 랭킹 정보를 파일로 저장하는 함수
+    /// </summary>
     void SaveRankData()
     {
         // Assets/Save 폴더에 Save.json이라는 이름으로 저장하기
+        SaveData data = new SaveData();             // 직렬화 가능한 클래스 할당
+        data.rankers = rankers;                     // 객체에 데이터 넣기
+        data.highRecords = highRecords;
+        string jsonText = JsonUtility.ToJson(data); // 객체 내용을 json 문자열로 변경
+
+        string path = $"{Application.dataPath}/Save/";  // 폴더 경로 저장해놓기
+        if( !Directory.Exists(path) )                   // 해당 폴더가 없는지 확인
+        {
+            Directory.CreateDirectory(path);            // 폴더가 없으면 만든다.
+        }
+
+        File.WriteAllText($"{path}{SaveFileName}", jsonText);    // 파일로 저장
     }
 
+    /// <summary>
+    /// 랭킹 정보를 파일에서 불러오는 함수
+    /// </summary>
     void LoadRankData()
     {
+        bool isSuccess = false;
+
         // Assets/Save 폴더에 있는 Save.json이라는 파일을 읽어서 랭킹 정보 덮어쓰기
+        string path = $"{Application.dataPath}/Save/";
+        if (Directory.Exists(path))
+        {
+            // 폴더가 있다
+            string fullPath = $"{path}{SaveFileName}";
+            if( File.Exists(fullPath) )
+            {
+                // 파일도 있다.
+                string jsonText = File.ReadAllText(fullPath);
+                SaveData loadedData = JsonUtility.FromJson<SaveData>(jsonText); // 데이터 변환
+                rankers = loadedData.rankers;           // RankPanel에 저장
+                highRecords = loadedData.highRecords;
+
+                isSuccess = true;
+            }
+        }
+
+        if(!isSuccess)  // 로딩이 실패했으면
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);    // 폴더가 없으면 만든다.
+            }
+            SetDefaultData();   // 파일이 없다면 기본데이터 설정
+        }
+
+        RefreshRankLines();
     }
 
 #if UNITY_EDITOR

@@ -51,11 +51,20 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    /// <summary>
+    /// ScoreText의 score를 확인하는 프로퍼티
+    /// </summary>
+    public int Score => ScoreText.Score;    // get만 있는 프로퍼티
+
     protected override void OnInitialize()
     {
         player = FindAnyObjectByType<Player>();
 
         scoreTextUI = FindAnyObjectByType<ScoreText>();
+        if (scoreTextUI != null)
+        {
+            scoreTextUI.OnInitialize();
+        }
 
         lifePanelUI = FindAnyObjectByType<LifePanel>();
         if (lifePanelUI != null)
@@ -68,5 +77,14 @@ public class GameManager : Singleton<GameManager>
         {
             gameOverPanelUI.OnInitialize(); // 플레이어를 찾은 이후에 실행되어야 함
         }
+    }
+
+    /// <summary>
+    /// 점수 추가하는 함수
+    /// </summary>
+    /// <param name="score">추가되는 점수</param>
+    public void AddScore(int score)
+    {
+        ScoreText.AddScore(score);
     }
 }
