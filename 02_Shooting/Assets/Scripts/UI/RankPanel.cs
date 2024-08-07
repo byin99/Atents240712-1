@@ -143,6 +143,16 @@ public class RankPanel : MonoBehaviour
         }
     }
 
+    void SaveRankData()
+    {
+        // Assets/Save 폴더에 Save.json이라는 이름으로 저장하기
+    }
+
+    void LoadRankData()
+    {
+        // Assets/Save 폴더에 있는 Save.json이라는 파일을 읽어서 랭킹 정보 덮어쓰기
+    }
+
 #if UNITY_EDITOR
 
     public void Test_DefaultRankPanel()
@@ -153,6 +163,45 @@ public class RankPanel : MonoBehaviour
     public void Test_UpdateRankPanel(int score)
     {
         UpdataRankData(score);
+    }
+
+    public void Test_Save()
+    {
+        SaveRankData();
+
+        //// rankers, highRecords
+        //string final = "";
+        //for (int i = 0; i < MaxRankings; i++)
+        //{
+        //    final += (rankers[i] + ",");
+        //    final += (highRecords[i] + ",");
+        //}
+
+        //Debug.Log(final);
+
+        //SaveData data = new SaveData();
+        //data.rankers = rankers;
+        //data.highRecords = highRecords;
+
+        //string jsonText = JsonUtility.ToJson(data);
+        //Debug.Log(jsonText);
+    }
+
+    public void Test_Load()
+    {
+        LoadRankData();
+
+        //string final = "AAA,1000000,BBB,100000,CCC,10000,DDD,1000,EEE,100,";
+        //string[] finals = final.Split(',');
+        //foreach (string s in finals)
+        //{
+        //    Debug.Log(s);
+        //}
+
+        //string json = "{\"rankers\":[\"AAA\",\"BBB\",\"CCC\",\"DDD\",\"EEE\"],\"highRecords\":[1000000,100000,10000,1000,100]}";
+        //SaveData loadedData = JsonUtility.FromJson<SaveData>(json);
+
+        //int i = 0;
     }
 #endif
 }
