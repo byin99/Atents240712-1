@@ -59,7 +59,7 @@ public class RankPanel : MonoBehaviour
         if(updatedIndex != null)
         {
             rankers[updatedIndex.Value] = inputText;    // 이름 변경
-            RefreshRankLines();
+            RefreshRankLines(updatedIndex.Value);       // 패널 화면 갱신
             updatedIndex = null;
         }
     }
@@ -99,6 +99,15 @@ public class RankPanel : MonoBehaviour
         {
             rankLines[i].SetData(rankers[i], highRecords[i]);   // 저장된 데이터대로 다시 표시
         }
+    }
+
+    /// <summary>
+    /// 패널에서 특정 라인만 업데이트
+    /// </summary>
+    /// <param name="index">업데이트할 라인의 인덱스</param>
+    void RefreshRankLines(int index)
+    {
+        rankLines[index].SetData(rankers[index], highRecords[index]);   // 저장된 데이터대로 다시 표시
     }
 
     /// <summary>
