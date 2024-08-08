@@ -8,6 +8,7 @@ TagManager:
   - Test
   - Border
   - PowerUp
+  - EnemyBullet
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Killzone
   - Item
   - Invincible
-  - 
+  - EnemyBullet
   - 
   - 
   - 

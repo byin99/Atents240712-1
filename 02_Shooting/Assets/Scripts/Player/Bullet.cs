@@ -52,7 +52,6 @@ public class Bullet : RecycleObject
         //Debug.Log("충돌 시작");
         //Instantiate(hitEffect, transform.position, Quaternion.identity);
         Factory.Instance.GetHitEffect(transform.position);
-
         //Destroy(gameObject);    // 자기자신 제거하기
         gameObject.SetActive(false);
     }

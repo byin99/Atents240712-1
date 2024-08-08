@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6880799671376711362}
   - component: {fileID: 8184236211359979685}
   - component: {fileID: 6582059507855513352}
-  m_Layer: 7
+  m_Layer: 13
   m_Name: BossBullet
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -161,3 +161,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 175e81f6acf46d044ad282cfa54e9f45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 7
+  lifeTime: 20

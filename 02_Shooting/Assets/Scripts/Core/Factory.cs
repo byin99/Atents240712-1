@@ -18,6 +18,9 @@ public class Factory : Singleton<Factory>
     EnemyCurvePool enemyCurve;
     EnemyBonusPool enemyBonus;
 
+    BossBulletPool bossBullet;
+    BossMissliePool bossMisslie;
+
     protected override void OnInitialize()
     {
         // 풀 초기화
@@ -57,6 +60,12 @@ public class Factory : Singleton<Factory>
 
         enemyBonus = GetComponentInChildren<EnemyBonusPool>();
         if (enemyBonus != null) enemyBonus.Initialize();
+
+        bossBullet = GetComponentInChildren<BossBulletPool>();
+        if (bossBullet != null) bossBullet.Initialize();
+
+        bossMisslie = GetComponentInChildren<BossMissliePool>();
+        if (bossMisslie != null) bossMisslie.Initialize();
     }
 
     // 풀에서 오브젝트 가져오는 함수들 ------------------------------------------------------------------
@@ -155,5 +164,25 @@ public class Factory : Singleton<Factory>
     public EnemyBonus GetEnemyBonus(Vector3? position)
     {
         return enemyBonus.GetObject(position);
+    }
+
+    /// <summary>
+    /// 보스용 총알 하나를 리턴하는 함수
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public BossBullet GetBossBullet(Vector3? position)
+    {
+        return bossBullet.GetObject(position);
+    }
+
+    /// <summary>
+    /// 보스용 미사일 하나를 리턴하는 함수
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public BossMisslie GetBossMisslie(Vector3? position)
+    {
+        return bossMisslie.GetObject(position);
     }
 }
