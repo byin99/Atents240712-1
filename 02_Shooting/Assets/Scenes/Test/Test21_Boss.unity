@@ -193,7 +193,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 152733400217085817, guid: 2e60658e0647d1f4cbcfae858d5626ba, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 717391848647156605, guid: 2e60658e0647d1f4cbcfae858d5626ba, type: 3}
       propertyPath: m_Enabled
@@ -601,7 +601,7 @@ GameObject:
   - component: {fileID: 1191596495}
   - component: {fileID: 1191596496}
   m_Layer: 0
-  m_Name: Test17_Enemies
+  m_Name: Test21_Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -632,7 +632,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1191596494}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f1ba692ff4bd3745a76be2d5a3ec881, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d26477806a850f49abc5874676b9fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   seed: -1
