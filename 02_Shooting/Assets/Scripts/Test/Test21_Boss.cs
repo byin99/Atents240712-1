@@ -16,4 +16,9 @@ public class Test21_Boss : TestBase
     {
         Factory.Instance.GetBossMisslie(target.position);
     }
+
+    protected override void OnTest3(InputAction.CallbackContext context)
+    {
+        Factory.Instance.GetBoss(target.position);
+    }
 }

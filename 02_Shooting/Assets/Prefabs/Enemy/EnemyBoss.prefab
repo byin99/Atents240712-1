@@ -434,10 +434,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63abe13a4a83c1140bdc7df85d0e4f6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifeTime: 30
-  moveSpeed: 3
-  point: 10
-  maxHP: 1
+  lifeTime: 300
+  moveSpeed: 2.5
+  point: 300
+  maxHP: 10
+  bulletInterval: 1
+  barrageInterval: 0.2
+  barrageCount: 3
+  areaMin: {x: 2, y: -3}
+  areaMax: {x: 7, y: 3}
 --- !u!1 &8101536159877285144
 GameObject:
   m_ObjectHideFlags: 0

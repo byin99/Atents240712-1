@@ -20,6 +20,7 @@ public class Factory : Singleton<Factory>
 
     BossBulletPool bossBullet;
     BossMissliePool bossMisslie;
+    EnemyBossPool enemyBoss; 
 
     protected override void OnInitialize()
     {
@@ -66,6 +67,9 @@ public class Factory : Singleton<Factory>
 
         bossMisslie = GetComponentInChildren<BossMissliePool>();
         if (bossMisslie != null) bossMisslie.Initialize();
+
+        enemyBoss = GetComponentInChildren<EnemyBossPool>();
+        if (enemyBoss != null) enemyBoss.Initialize();
     }
 
     // 풀에서 오브젝트 가져오는 함수들 ------------------------------------------------------------------
@@ -184,5 +188,15 @@ public class Factory : Singleton<Factory>
     public BossMisslie GetBossMisslie(Vector3? position)
     {
         return bossMisslie.GetObject(position);
+    }
+
+    /// <summary>
+    /// 보스 하나를 리턴하는 함수
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public EnemyBoss GetBoss(Vector3? position)
+    {
+        return enemyBoss.GetObject(position);
     }
 }
