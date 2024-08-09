@@ -1394,6 +1394,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: MultySpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 717391848647156605, guid: 2e60658e0647d1f4cbcfae858d5626ba, type: 3}
+      propertyPath: spawnDatas.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 717391848647156605, guid: 2e60658e0647d1f4cbcfae858d5626ba, type: 3}
+      propertyPath: spawnDatas.Array.data[4].type
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 717391848647156605, guid: 2e60658e0647d1f4cbcfae858d5626ba, type: 3}
+      propertyPath: spawnDatas.Array.data[4].interval
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 717391848647156605, guid: 2e60658e0647d1f4cbcfae858d5626ba, type: 3}
+      propertyPath: spawnDatas.Array.data[4].countinueCount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6915623726451881705, guid: 2e60658e0647d1f4cbcfae858d5626ba, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10

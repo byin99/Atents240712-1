@@ -437,7 +437,7 @@ MonoBehaviour:
   lifeTime: 300
   moveSpeed: 2.5
   point: 300
-  maxHP: 10
+  maxHP: 30
   bulletInterval: 1
   barrageInterval: 0.2
   barrageCount: 3
