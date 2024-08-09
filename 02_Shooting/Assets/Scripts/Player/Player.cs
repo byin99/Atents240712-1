@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -78,6 +77,11 @@ public class Player : MonoBehaviour
     /// 현재 생명
     /// </summary>
     int life = 0;
+
+    /// <summary>
+    /// 중복 충돌 방지용 변수
+    /// </summary>
+    bool isHit = false;
 
     /// <summary>
     /// 초기 생명
@@ -262,9 +266,11 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))  // 이쪽을 권장. ==에 비해 가비지가 덜 생성된다. 생성되는 코드도 훨씬 빠르게 구현되어 있음.
+        // 아직 맞지 않았고, 적과 부딪쳤을 때
+        if (!isHit && collision.gameObject.CompareTag("Enemy"))  // 이쪽을 권장. ==에 비해 가비지가 덜 생성된다. 생성되는 코드도 훨씬 빠르게 구현되어 있음.
         {
             //Debug.Log("적과 부딪쳤다.");
+            isHit = true;
             Life--;
         }
         //else if (collision.gameObject.CompareTag("PowerUp"))
@@ -447,6 +453,7 @@ public class Player : MonoBehaviour
             yield return null;  // 다음 프레임까지 대기
         }
 
+        isHit = false;                              // 명중 여부 리셋
         gameObject.layer = playerLayer;             // 플레이어 레이어로 복구
         spriteRenderer.color = Color.white;         // 알파값도 복구
     }
