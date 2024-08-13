@@ -113,21 +113,21 @@ public class ForestGenerator : MonoBehaviour
     }
 
     /// <summary>
-    /// 생성한 나무를 모두 제거하는 함수
+    /// 시리얼 넘버만 리셋
     /// </summary>
     private void ResetTrees()
     {
-        if (trees == null)
-        {
-            trees = transform.GetChild(1);
-        }
+        //if (trees == null)
+        //{
+        //    trees = transform.GetChild(1);
+        //}
 
-        while (trees.childCount > 0)
-        {
-            Transform del = trees.GetChild(0);
-            del.SetParent(null);        // Destroy가 즉시 되는 것은 아니기 때문에 일단 trees의 자식에서 뺀다.
-            Destroy(del.gameObject);
-        }
+        //while (trees.childCount > 0)
+        //{
+        //    Transform del = trees.GetChild(0);
+        //    del.SetParent(null);        // Destroy가 즉시 되는 것은 아니기 때문에 일단 trees의 자식에서 뺀다.
+        //    //DestroyImmediate(del.gameObject);   // 이래도 안됨
+        //}
         serialNumber = 0;
     }
 
