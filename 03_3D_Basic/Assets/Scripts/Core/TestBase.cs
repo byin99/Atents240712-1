@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.TextCore.Text;
 using Random = UnityEngine.Random;      // 다른 네임스페이스에서 제공하는 Random이 있어도 UnityEngine의 Random 사용
 
 public class TestBase : MonoBehaviour
@@ -86,3 +87,4 @@ public class TestBase : MonoBehaviour
     {
     }
 }
+
