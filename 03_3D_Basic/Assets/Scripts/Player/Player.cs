@@ -39,12 +39,16 @@ public class Player : MonoBehaviour
 
 
     Rigidbody rigid;
+    Animator animator;
+
+    readonly int IsMove_Hash = Animator.StringToHash("IsMove");
 
 
     private void Awake()
     {
         inputActions = new PlayerInputActions();
         rigid = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     private void OnEnable()
@@ -95,5 +99,14 @@ public class Player : MonoBehaviour
     {
         rotateDirection = input.x;
         moveDirection = input.y;
+        animator.SetBool(IsMove_Hash, isMove);
+
+        // 이동시에만 팔을 움직이게 하고 싶을 때
+        //bool move = true;
+        //if(moveDirection > -0.01f && moveDirection < 0.01f) // moveDirection == 0.0f 이것과 비슷한 코드
+        //{
+        //    move = false;
+        //}
+        //animator.SetBool(IsMove_Hash, move);
     }
 }
