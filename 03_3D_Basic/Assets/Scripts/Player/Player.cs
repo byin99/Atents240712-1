@@ -23,6 +23,16 @@ public class Player : MonoBehaviour
     public float rotateSpeed = 180.0f;
 
     /// <summary>
+    /// 점프력
+    /// </summary>
+    public float jumpPower = 6.0f;
+
+    /// <summary>
+    /// 점프 쿨타임
+    /// </summary>
+    public float jumpCoolTime = 1;
+
+    /// <summary>
     /// 인풋 액션
     /// </summary>
     PlayerInputActions inputActions;
@@ -37,18 +47,58 @@ public class Player : MonoBehaviour
     /// </summary>
     private float moveDirection = 0.0f;
 
+    /// <summary>
+    /// 지금 발이 바닥에 닿았는지 확인하는 변수(true면 바닥에 닿아있다.)
+    /// </summary>
+    bool isGrounded = true;
 
+    /// <summary>
+    /// 남아있는 점프 쿨타임
+    /// </summary>
+    float jumpCoolRemains = 0.0f;
+
+    /// <summary>
+    /// 지금 점프가 가능한지 확인하는 프로퍼티(바닥에 닿아있고 쿨타임이 다 되었다)
+    /// </summary>
+    bool IsJumpAvailable => isGrounded && (JumpCoolRemains < 0.0f);
+
+    /// <summary>
+    /// 점프 쿨타임을 확인하고 설정하기 위한 프로퍼티
+    /// </summary>
+    float JumpCoolRemains
+    {
+        get => jumpCoolRemains;
+        set
+        {
+            jumpCoolRemains = value;
+            onJumpCoolTimeChange?.Invoke(jumpCoolRemains/jumpCoolTime); // 비율로 전달
+        }
+    }
+
+    /// <summary>
+    /// 점프 쿨타임에 변화가 있었음을 알리는 델리게이트
+    /// </summary>
+    public Action<float> onJumpCoolTimeChange;
+
+    // 컴포넌트들
     Rigidbody rigid;
     Animator animator;
 
+    // 애니메이터용 해시
     readonly int IsMove_Hash = Animator.StringToHash("IsMove");
-
 
     private void Awake()
     {
         inputActions = new PlayerInputActions();
         rigid = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+
+        GroundSensor groundSensor = GetComponentInChildren<GroundSensor>();
+        groundSensor.onGround += (isGround) =>
+        {
+            isGrounded = isGround;      // GroundSensor에서 신호가 오면 변수 저장
+            //Debug.Log(isGrounded);
+        };
     }
 
     private void OnEnable()
@@ -56,10 +106,12 @@ public class Player : MonoBehaviour
         inputActions.Player.Enable();
         inputActions.Player.Move.performed += OnMoveInput;
         inputActions.Player.Move.canceled += OnMoveInput;
+        inputActions.Player.Jump.performed += OnJumpInput;
     }
 
     private void OnDisable()
     {
+        inputActions.Player.Jump.performed -= OnJumpInput;
         inputActions.Player.Move.canceled -= OnMoveInput;
         inputActions.Player.Move.performed -= OnMoveInput;
         inputActions.Player.Disable();
@@ -68,6 +120,16 @@ public class Player : MonoBehaviour
     private void OnMoveInput(InputAction.CallbackContext context)
     {
         SetInput(context.ReadValue<Vector2>(), !context.canceled);  // 입력 받은 내용 처리
+    }
+
+    private void OnJumpInput(InputAction.CallbackContext _)
+    {
+        Jump();
+    }
+
+    private void Update()
+    {
+        JumpCoolRemains -= Time.deltaTime;  // 점프 쿨타임 줄이기
     }
 
     private void FixedUpdate()
@@ -108,5 +170,22 @@ public class Player : MonoBehaviour
         //    move = false;
         //}
         //animator.SetBool(IsMove_Hash, move);
+    }
+
+    /// <summary>
+    /// 플레이어 점프 처리용 함수
+    /// </summary>
+    void Jump()
+    {
+        // 점프 키를 누르면 실행된다(space키)
+        // 2단 점프 금지
+        // 쿨타임 존재
+
+        if (IsJumpAvailable)        // 점프가 가능할 때만
+        {
+            //Debug.Log("Jump");
+            rigid.AddForce(jumpPower * Vector3.up, ForceMode.Impulse);  // 위로 점프
+            JumpCoolRemains = jumpCoolTime;                             // 쿨타임 초기화
+        }
     }
 }

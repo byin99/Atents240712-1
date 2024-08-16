@@ -16,7 +16,7 @@ public class Test_UI : MonoBehaviour, IPointerClickHandler
 
         Debug.Log($"Click : {eventData.position}");
 
-        int i;
-        i = 10;
+        //int i;
+        //i = 10;
     }
 }
