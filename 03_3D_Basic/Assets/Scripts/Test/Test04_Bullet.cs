@@ -12,6 +12,7 @@ public class Test04_Bullet : TestBase
     private void Start()
     {
         fire = transform.GetChild(0);
+        Time.timeScale = 0.1f;
     }
 
     protected override void OnTest1(InputAction.CallbackContext context)
