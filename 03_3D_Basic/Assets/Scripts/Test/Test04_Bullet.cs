@@ -12,7 +12,7 @@ public class Test04_Bullet : TestBase
     private void Start()
     {
         fire = transform.GetChild(0);
-        Time.timeScale = 0.1f;
+        //Time.timeScale = 0.1f;
     }
 
     protected override void OnTest1(InputAction.CallbackContext context)
@@ -22,6 +22,6 @@ public class Test04_Bullet : TestBase
 
     protected override void OnTest2(InputAction.CallbackContext context)
     {
-        Factory.Instance.GetBullet(fire.position);
+        Factory.Instance.GetBullet(fire.position, fire.eulerAngles);
     }
 }
