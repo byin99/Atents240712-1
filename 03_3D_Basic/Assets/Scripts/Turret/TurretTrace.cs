@@ -25,6 +25,11 @@ public class TurretTrace : TurretBase
     public float turnSmooth = 2.0f;
 
     /// <summary>
+    /// 터렛이 총알 발사를 시작하는 좌우 발사각(10일 경우 +-10도 씩)
+    /// </summary>
+    public float fireAngle = 10.0f;
+
+    /// <summary>
     /// 추적할 플레이어
     /// </summary>
     Transform target;
@@ -49,6 +54,7 @@ public class TurretTrace : TurretBase
         base.Awake();
 
         sightTrigger = GetComponent<SphereCollider>();
+        sightTrigger.radius = sightRange;
         fireCoroutine = PeriodFire();
     }
 
@@ -78,9 +84,22 @@ public class TurretTrace : TurretBase
     {
         base.OnDrawGizmos();
 
+        // 시야 범위 그리기
         //Gizmos.DrawWireSphere(transform.position, sightRange);
-        Handles.color = Color.yellow;
+        Handles.color = Color.white;
         Handles.DrawWireDisc(transform.position, transform.up, sightRange, 3.0f);
+
+        // 총구 방향 그리기
+        Handles.color = Color.yellow;
+        if(gunTransform == null)
+            gunTransform = transform.GetChild(2);   // 없으면 찾기
+        Vector3 from = transform.position;
+        Vector3 to = transform.position + gunTransform.forward * sightRange;
+        Handles.DrawDottedLine(from, to, 2.0f);
+
+        // 발사각 그리기
+        // 일단 녹색
+        //Handles.DrawWireArc(중심점, 위쪽방향, 시작 방향 벡터, 각도, 두깨);
     }
 #endif
 

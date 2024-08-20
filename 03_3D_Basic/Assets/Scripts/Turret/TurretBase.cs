@@ -36,7 +36,7 @@ public class TurretBase : MonoBehaviour
             yield return new WaitForSeconds(fireInteval);
             Bullet bullet = Factory.Instance.GetBullet(fireTransform.position, fireTransform.eulerAngles);
 
-            Debug.Log(bullet.transform.forward);
+            //Debug.Log(bullet.transform.forward);
         }
     }
 
