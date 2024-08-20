@@ -228,7 +228,7 @@ public class TurretTrace : TurretBase
         bulletMask = ~bulletMask;                       // 1111 1111 1111 1111 1111 1101 1111 1111
         mask = mask & bulletMask;                       // 1111 1111 1111 1111 1111 1101 1111 1111
                                                         // mask는 총알을 제외한 모든 레이어가 세팅되어 있음.   
-        //Physics.Raycast(ray, out RaycastHit hitInfo, sightRange, LayerMask.GetMask("Player", "Default"))
+                                                        //Physics.Raycast(ray, out RaycastHit hitInfo, sightRange, LayerMask.GetMask("Player", "Default"))
 
         // out : 출력용 파라메터라고 알려주는 키워드. 함수가 실행되면 자동으로 초기화된다.
         if ( Physics.Raycast(ray, out RaycastHit hitInfo, sightRange, mask) )
