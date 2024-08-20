@@ -49,6 +49,19 @@ public class TurretTrace : TurretBase
     /// </summary>
     bool isFiring = false;
 
+    /// <summary>
+    /// 발사 재시작용 쿨타임
+    /// </summary>
+    float fireCoolTime = 0.0f;
+
+#if UNITY_EDITOR
+
+    /// <summary>
+    /// 발사할 수 있는 상황인지 확인하는 변수
+    /// </summary>
+    bool isFireReady = false;
+#endif
+
     protected override void Awake()
     {
         base.Awake();
@@ -60,6 +73,7 @@ public class TurretTrace : TurretBase
 
     private void Update()
     {
+        fireCoolTime -= Time.deltaTime;
         LookTargetAndAttack();
     }
 
@@ -98,12 +112,25 @@ public class TurretTrace : TurretBase
         Handles.DrawDottedLine(from, to, 2.0f);
 
         // 발사각 그리기
-        
-        // 녹색 : 내 시야 범위안에 플레이어가 없는 상태일때
-        // 주황색 : 내 시야범위안에 플레이어가 있고 발사각안에 플레이어가 없는 상태일 때
-        // 빨간색 : 내 시야범위안에 플레이어가 있고 발사각안에 플레이어가 있는 상태일때        
-        Handles.color = Color.green;    // 일단 녹색
 
+        // 녹색 : 내 시야 범위안에 플레이어가 없는 상태일때
+        // 주황색 : 내 시야범위안에 플레이어가 있고 발사를 할 수 없는 상태일 때(시야각 밖이거나 가려지는 물체가 있다)
+        // 빨간색 : 내 시야범위안에 플레이어가 있고 발사를 할 수 있는 상태일 때(시야각 안이고 가려지는 물체도 없다)
+        if (target == null)
+        {
+            Handles.color = Color.green;
+        }
+        else
+        {
+            if (isFireReady)
+            {
+                Handles.color = Color.red;
+            }
+            else
+            {
+                Handles.color = new Color(1, 0.5f, 0);
+            }
+        }
 
         Vector3 dir1 = Quaternion.AngleAxis(-fireAngle, transform.up) * gunTransform.forward;   // gunTransform.forward를 왼쪽으로 fireAngle만큼 회전
         Vector3 dir2 = Quaternion.AngleAxis(fireAngle, transform.up) * gunTransform.forward;    // gunTransform.forward를 오른쪽으로 fireAngle만큼 회전
@@ -117,6 +144,9 @@ public class TurretTrace : TurretBase
     }
 #endif
 
+    /// <summary>
+    /// 플레이어 추적 및 발사 처리용 함수
+    /// </summary>
     void LookTargetAndAttack()
     {
         bool isStartFire = false;
@@ -137,18 +167,22 @@ public class TurretTrace : TurretBase
                 if(angle < fireAngle)
                 {
                     // 사이각이 fireAngle보다 작으면 발사각 안이다.
-                    isStartFire = true;                
-                }            
+                    isStartFire = true;                    
+                }   
             }
         }
 
+#if UNITY_EDITOR
+        isFireReady = isStartFire;
+#endif
+
         if (isStartFire)
         {
-            StartFire();
+            StartFire();    // 발사 시작
         }
         else
         {
-            StopFire();
+            StopFire();     // 발사 정지
         }
     }
 
@@ -157,10 +191,10 @@ public class TurretTrace : TurretBase
     /// </summary>
     void StartFire()
     {
-        if(!isFiring)   // 발사 중이 아닐 때만
+        if(!isFiring && fireCoolTime < 0.0f)    // 발사 중이 아닐 때만 && 쿨타임이 다 되었을 때
         {
             isFiring = true;
-            StartCoroutine(fireCoroutine);  // 발사 코루틴 실행
+            StartCoroutine(fireCoroutine);      // 발사 코루틴 실행
         }
     }
 
@@ -169,10 +203,11 @@ public class TurretTrace : TurretBase
     /// </summary>
     void StopFire()
     {
-        if(isFiring)    // 발사 중일 때만
+        if (isFiring)
         {
             StopCoroutine(fireCoroutine);   // 발사 코루틴 정지
             isFiring = false;
+            fireCoolTime = fireInteval;     // 쿨타임 초기화
         }
     }
 
@@ -196,7 +231,7 @@ public class TurretTrace : TurretBase
                 result = true;
             }
         }
-
+        
         return result;
     }
 }
