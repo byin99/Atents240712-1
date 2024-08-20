@@ -222,9 +222,18 @@ public class TurretTrace : TurretBase
 
         Ray ray = new Ray(gunTransform.position, lookDirection);
 
-        // out : 출력용 파라메터라고 알려주는 키워드. 함수가 실행되면 자동으로 초기화된다.        
-        if( Physics.Raycast(ray, out RaycastHit hitInfo, sightRange) )
+        // 총알이 레이케스팅 되는 문제 방지
+        int mask = int.MaxValue;                        // 1111 1111 1111 1111 1111 1111 1111 1111
+        int bulletMask = LayerMask.GetMask("Bullet");   // 0000 0000 0000 0000 0000 0010 0000 0000
+        bulletMask = ~bulletMask;                       // 1111 1111 1111 1111 1111 1101 1111 1111
+        mask = mask & bulletMask;                       // 1111 1111 1111 1111 1111 1101 1111 1111
+                                                        // mask는 총알을 제외한 모든 레이어가 세팅되어 있음.   
+        //Physics.Raycast(ray, out RaycastHit hitInfo, sightRange, LayerMask.GetMask("Player", "Default"))
+
+        // out : 출력용 파라메터라고 알려주는 키워드. 함수가 실행되면 자동으로 초기화된다.
+        if ( Physics.Raycast(ray, out RaycastHit hitInfo, sightRange, mask) )
         {
+            //Debug.Log(hitInfo.transform.gameObject.name);
             // ray에 닿은 오브젝트가 있다.
             if( hitInfo.transform == target )   // 첫번째로 닿은 오브젝트가 target이다.(= 가리는 물체가 없다)
             {
