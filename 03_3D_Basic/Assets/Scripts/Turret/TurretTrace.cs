@@ -94,26 +94,56 @@ public class TurretTrace : TurretBase
         if(gunTransform == null)
             gunTransform = transform.GetChild(2);   // 없으면 찾기
         Vector3 from = transform.position;
-        Vector3 to = transform.position + gunTransform.forward * sightRange;
+        Vector3 to = from + gunTransform.forward * sightRange;
         Handles.DrawDottedLine(from, to, 2.0f);
 
         // 발사각 그리기
-        // 일단 녹색
+        
+        // 녹색 : 내 시야 범위안에 플레이어가 없는 상태일때
+        // 주황색 : 내 시야범위안에 플레이어가 있고 발사각안에 플레이어가 없는 상태일 때
+        // 빨간색 : 내 시야범위안에 플레이어가 있고 발사각안에 플레이어가 있는 상태일때        
+        Handles.color = Color.green;    // 일단 녹색
+
+
+        Vector3 dir1 = Quaternion.AngleAxis(-fireAngle, transform.up) * gunTransform.forward;   // gunTransform.forward를 왼쪽으로 fireAngle만큼 회전
+        Vector3 dir2 = Quaternion.AngleAxis(fireAngle, transform.up) * gunTransform.forward;    // gunTransform.forward를 오른쪽으로 fireAngle만큼 회전
+
+        to = from + dir1 * sightRange;      // dir1방향으로 sightRange만큼 이동한 위치
+        Handles.DrawLine(from, to, 3.0f);   // 가장자리 부분의 선 그리기
+        to = from + dir2 * sightRange;      // dir2방향으로 sightRange만큼 이동한 위치
+        Handles.DrawLine(from, to, 3.0f);   // 가장자리 부분의 선 그리기
+        Handles.DrawWireArc(from, transform.up, dir1, fireAngle * 2, sightRange, 3.0f); // 호 그리기
         //Handles.DrawWireArc(중심점, 위쪽방향, 시작 방향 벡터, 각도, 두깨);
     }
 #endif
 
     void LookTargetAndAttack()
     {
+        bool isStartFire = false;
         if(target != null)
         {
             Vector3 direction = target.transform.position - transform.position; // 플레이어를 바라보는 방향
             direction.y = 0.0f; // xz평면으로만 회전하게 하기 위해 y는 제거
             //gunTransform.forward = direction; // 즉시 이동
 
-            gunTransform.rotation = Quaternion.Slerp(
-                gunTransform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * turnSmooth);
+            if(IsTargetVisible(direction))  // 타겟이 보이고 있다.
+            {
+                // 총의 방향을 플레이어 쪽으로 돌리기
+                gunTransform.rotation = Quaternion.Slerp(
+                    gunTransform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * turnSmooth);
 
+                // 발사각 적용하기
+                float angle = Vector3.Angle(gunTransform.forward, direction);   // gunTransform.forward와 direction의 사이각 구하기
+                if(angle < fireAngle)
+                {
+                    // 사이각이 fireAngle보다 작으면 발사각 안이다.
+                    isStartFire = true;                
+                }            
+            }
+        }
+
+        if (isStartFire)
+        {
             StartFire();
         }
         else
@@ -144,5 +174,29 @@ public class TurretTrace : TurretBase
             StopCoroutine(fireCoroutine);   // 발사 코루틴 정지
             isFiring = false;
         }
+    }
+
+    /// <summary>
+    /// 추적 대상이 보이는지 확인하는 함수
+    /// </summary>
+    /// <param name="lookDirection">바라보는 방향</param>
+    /// <returns>true면 보인다. false면 안보인다.</returns>
+    bool IsTargetVisible(Vector3 lookDirection)
+    {
+        bool result = false;
+
+        Ray ray = new Ray(gunTransform.position, lookDirection);
+
+        // out : 출력용 파라메터라고 알려주는 키워드. 함수가 실행되면 자동으로 초기화된다.        
+        if( Physics.Raycast(ray, out RaycastHit hitInfo, sightRange) )
+        {
+            // ray에 닿은 오브젝트가 있다.
+            if( hitInfo.transform == target )   // 첫번째로 닿은 오브젝트가 target이다.(= 가리는 물체가 없다)
+            {
+                result = true;
+            }
+        }
+
+        return result;
     }
 }
