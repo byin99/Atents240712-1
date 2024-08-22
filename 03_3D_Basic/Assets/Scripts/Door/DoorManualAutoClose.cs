@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DoorManualAutoClose : DoorManual
+public class DoorManualAutoClose : DoorManualStandard
 {
     public float autoCloseTime = 3.0f;
 
