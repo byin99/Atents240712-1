@@ -12,7 +12,7 @@ public class DoorManualBase : DoorBase, IInteractable
     /// <summary>
     /// 인터페이스 때문에 일단 생성
     /// </summary>
-    public bool CanUse => true;
+    public virtual bool CanUse => true;
 
     /// <summary>
     /// 문을 사용하는 함수(인터페이스에 있는 함수 구현)

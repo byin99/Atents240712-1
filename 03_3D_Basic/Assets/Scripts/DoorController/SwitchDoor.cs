@@ -75,6 +75,7 @@ public class SwitchDoor : MonoBehaviour, IInteractable
         if (CanUse)
         {
             IsOn = !IsOn;
+            remainsCoolTime = coolTime;
         }
     }
 }
