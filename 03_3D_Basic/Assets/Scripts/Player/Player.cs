@@ -228,6 +228,7 @@ public class Player : MonoBehaviour
     public void SetSlowDebuf(float slowRate)
     {
         //Debug.Log("슬로우 디버프");
+        StopAllCoroutines();
         speedModifier = slowRate;
     }
 
