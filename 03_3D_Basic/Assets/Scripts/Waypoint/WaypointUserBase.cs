@@ -44,7 +44,40 @@ public class WaypointUserBase : MonoBehaviour
     {
         get
         {
-            return (target.position - transform.position).sqrMagnitude < 0.01f; // 도착지점까지의 거리가 0.1보다 작으면 도착했다고 판단
+            return (target.position - transform.position).sqrMagnitude < 0.0025f; // 도착지점까지의 거리가 0.05보다 작으면 도착했다고 판단
         }
+    }
+
+    protected virtual void Start()
+    {
+        Target = targetWaypoints.CurrentWaypoint;   // 첫번째 Target 지정
+    }
+
+    private void FixedUpdate()
+    {
+        OnMove();
+    }
+
+    /// <summary>
+    /// 이동 처리용 함수
+    /// </summary>
+    protected virtual void OnMove()
+    {
+        // 항상 Target방향으로 움직이고 웨이포인트 지점에 도착하면 다음 Target 설정
+        transform.Translate(Time.fixedDeltaTime * moveSpeed * moveDirection, Space.World);
+        //Vector3.MoveTowards() : 정확한 위치로 갈 수 있지만 root연산이 들어간다.
+
+        if (IsArrived)
+        {
+            OnArrived();    // 도착 처리
+        }
+    }
+
+    /// <summary>
+    /// 웨이포인트 지점에 도착했을 때 실행될 함수
+    /// </summary>
+    protected virtual void OnArrived()
+    {
+        Target = targetWaypoints.GetNextWaypoint(); // 다음 웨이포인트지점 설정
     }
 }
