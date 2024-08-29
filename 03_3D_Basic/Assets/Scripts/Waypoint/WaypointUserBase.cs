@@ -55,16 +55,17 @@ public class WaypointUserBase : MonoBehaviour
 
     private void FixedUpdate()
     {
-        OnMove();
+        OnMove(Time.fixedDeltaTime * moveSpeed * moveDirection);
     }
 
     /// <summary>
     /// 이동 처리용 함수
     /// </summary>
-    protected virtual void OnMove()
+    /// <param name="moveDelta">움직인 정도</param>
+    protected virtual void OnMove(Vector3 moveDelta)
     {
         // 항상 Target방향으로 움직이고 웨이포인트 지점에 도착하면 다음 Target 설정
-        transform.Translate(Time.fixedDeltaTime * moveSpeed * moveDirection, Space.World);
+        transform.Translate(moveDelta, Space.World);
         //Vector3.MoveTowards() : 정확한 위치로 갈 수 있지만 root연산이 들어간다.
 
         if (IsArrived)

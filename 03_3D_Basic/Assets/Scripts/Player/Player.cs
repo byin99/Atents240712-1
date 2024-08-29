@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IPlatformRide
 {
     // 플레이어가 WASD입력을 받아서 이동한다.(액션 이름은 Movement)
     // WS로 전진/후진
@@ -127,6 +127,33 @@ public class Player : MonoBehaviour
         inputActions.Player.Move.performed -= OnMoveInput;
         inputActions.Player.Disable();
     }
+
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    Debug.Log($"OnTriggerEnter : {other.gameObject.name}");
+    //    PlatformBase platform = other.GetComponent<PlatformBase>();
+    //    if (platform != null)
+    //    {
+    //        Debug.Log("등록");
+    //        platform.onPlatformMove += OnRidePlatform;  // 플랫폼 위에 올라가면 델리게이트에 함수 등록
+    //        //platform.onPlatformMove = OnRidePlatform;
+    //    }
+
+    //    // 1번째 : 플레이어 컬라이더가 플랫폼 트리거에 들어갔을 때
+    //    // 2번째 : 플레이어 바닥체크용 트리거에 플랫폼 컬라이더가 들어갔을 때
+    //    // 3번째 : 플레이어 바닥체크용 트리거가 플랫폼 트리거에 들어갔을 때
+    //}
+
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    PlatformBase platform = other.GetComponent<PlatformBase>();
+    //    if (platform != null)
+    //    {
+    //        platform.onPlatformMove -= OnRidePlatform;  // 플랫폼 위에서 나가면 델리게이트에서 함수 등록 해제
+    //        //platform.onPlatformMove = null;
+
+    //    }
+    //}
 
     private void OnMoveInput(InputAction.CallbackContext context)
     {
@@ -265,5 +292,15 @@ public class Player : MonoBehaviour
 
         speedModifier = 1.0f;
         //Debug.Log("슬로우 디버프 - 해제 완료");
+    }
+
+
+    /// <summary>
+    /// 플랫폼 움직임에 따라 같이 움직이게 하는 함수
+    /// </summary>
+    /// <param name="moveDelta">플랫폼이 움직인 양</param>
+    public void OnRidePlatform(Vector3 moveDelta)
+    {
+        rigid.MovePosition(rigid.position + moveDelta);
     }
 }

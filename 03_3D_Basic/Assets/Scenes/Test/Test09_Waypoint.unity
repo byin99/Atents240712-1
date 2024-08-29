@@ -351,6 +351,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1802012668156756404, guid: c4886084b7973194aacd431d8935888e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3781522224542050640, guid: c4886084b7973194aacd431d8935888e, type: 3}
       propertyPath: m_Name
       value: Player
@@ -466,6 +470,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1272799084}
+  - component: {fileID: 1272799085}
   m_Layer: 0
   m_Name: Test09_Waypoint
   m_TagString: Untagged
@@ -489,6 +494,19 @@ Transform:
   - {fileID: 787152355}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1272799085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272799083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cda3b1e2846d604294f939b20c745a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seed: -1
 --- !u!114 &1662020894 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3618693027155747245, guid: 61c36abeaa8c8104d82354648d2ae3be, type: 3}
@@ -775,11 +793,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7381521555547754916, guid: af8ac13d2a764744ca5f217c631c909c, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8011437917879139660, guid: af8ac13d2a764744ca5f217c631c909c, type: 3}
       propertyPath: m_Name
       value: StationSet_Auto
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 649128076137509875, guid: af8ac13d2a764744ca5f217c631c909c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -805,7 +828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetWaypoints: {fileID: 0}
-  moveSpeed: 5
+  moveSpeed: 0.1
 --- !u!1001 &7706191322015570821
 PrefabInstance:
   m_ObjectHideFlags: 0
