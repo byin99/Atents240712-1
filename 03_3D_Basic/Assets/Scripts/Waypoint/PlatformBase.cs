@@ -38,8 +38,8 @@ public class PlatformBase : WaypointUserBase
         IPlatformRide target = other.GetComponent<IPlatformRide>(); 
         if(target != null)      // 플랫폼을 탈 수 있는 오브젝트 일 때
         {
-            //Debug.Log($"등록 : {other.gameObject.name}");
-            onPlatformMove += target.OnRidePlatform;    // 따라 움직이는 함수를 등록한다.
+            RiderOn(target);
+            //Debug.Log($"등록 : {other.gameObject.name}");            
         }
     }
 
@@ -48,7 +48,25 @@ public class PlatformBase : WaypointUserBase
         IPlatformRide target = other.GetComponent<IPlatformRide>();
         if (target != null)
         {
-            onPlatformMove -= target.OnRidePlatform;
+            RiderOff(target);
         }
+    }
+
+    /// <summary>
+    /// 플랫폼 위에 타겟이 올라왔을 때 실행되는 함수
+    /// </summary>
+    /// <param name="target">플랫폼 위에 탄 대상</param>
+    protected virtual void RiderOn(IPlatformRide target)
+    {
+        onPlatformMove += target.OnRidePlatform;    // 따라 움직이는 함수를 등록한다.
+    }
+
+    /// <summary>
+    /// 플랫폼 위에 있던 타겟이 내려갔을 때 실행되는 함수
+    /// </summary>
+    /// <param name="target">플랫폼에서 내린 대상</param>
+    protected virtual void RiderOff(IPlatformRide target)
+    {
+        onPlatformMove -= target.OnRidePlatform;
     }
 }
