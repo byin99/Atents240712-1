@@ -9,7 +9,7 @@ public class PlatformBase : WaypointUserBase
     /// <summary>
     /// 플랫폼이 움직일때마다 움직인 정도를 파라메터로 넘기는 델리게이트
     /// </summary>
-    public Action<Vector3> onPlatformMove;
+    Action<Vector3> onPlatformMove;
 
     protected override void Start()
     {
@@ -34,12 +34,12 @@ public class PlatformBase : WaypointUserBase
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"OnTriggerEnter : {other.gameObject.name}");
-        IPlatformRide target = other.GetComponent<IPlatformRide>();
-        if(target != null)
+        //Debug.Log($"OnTriggerEnter : {other.gameObject.name}");
+        IPlatformRide target = other.GetComponent<IPlatformRide>(); 
+        if(target != null)      // 플랫폼을 탈 수 있는 오브젝트 일 때
         {
-            Debug.Log($"등록 : {other.gameObject.name}");
-            onPlatformMove += target.OnRidePlatform;
+            //Debug.Log($"등록 : {other.gameObject.name}");
+            onPlatformMove += target.OnRidePlatform;    // 따라 움직이는 함수를 등록한다.
         }
     }
 
