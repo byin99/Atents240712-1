@@ -91,4 +91,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetWaypoints: {fileID: 0}
-  moveSpeed: 0.1
+  moveSpeed: 3
