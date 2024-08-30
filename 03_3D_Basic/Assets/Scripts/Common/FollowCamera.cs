@@ -19,6 +19,11 @@ public class FollowCamera : MonoBehaviour
     /// </summary>
     Vector3 offset;
 
+    /// <summary>
+    /// 플레이어와 카메라 사이의 거리(offset의 길이)
+    /// </summary>
+    float length;
+
     private void Start()
     {
         if(target == null)
@@ -28,6 +33,7 @@ public class FollowCamera : MonoBehaviour
         }
 
         offset = transform.position - target.position;  // target에서 카메라로 가는 방향 벡터
+        length = offset.magnitude;  // 길이 저장하기
     }
 
     //private void LateUpdate() // 물리와 일반 업데이트 차이 때문에 떨리는 현상이 발생한다.
@@ -39,5 +45,13 @@ public class FollowCamera : MonoBehaviour
             target.position + Quaternion.LookRotation(target.forward) * offset,    // 적절한 위치로 이동하기
             Time.fixedDeltaTime * smooth);
         transform.LookAt(target);   // target 바라보게 만들기
+
+        // 플레이어와 카메라 사이에 장애물이 있을 때 장애물 앞쪽에 카메라가 존재하게 만들기
+        Ray ray = new Ray(target.position, transform.position - target.position);   // 카메라 root에서 카메라 위치로 나가는 ray
+        if( Physics.Raycast(ray, out RaycastHit hitInfo, length))
+        {
+            transform.position = hitInfo.point; // 충돌한 위치로 즉시 옮기기
+        }
     }
+
 }
