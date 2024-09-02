@@ -15,12 +15,34 @@ public class Test12_Maze : TestBase
     //  4.1. B셀에서 움직이다가 경로에 닿았을 경우 이전 경로는 무시한다.
     // 5. 모든 셀이 미로에 포함될 때까지 2번 항목을 반복한다.
 
+    public PathDirection pathDir;
+    public CornerMask cornerMask;
+    public CellVisualizer cell;
+
     protected override void OnTest1(InputAction.CallbackContext context)
     {
-        Direction dir = Direction.North | Direction.West;
+        PathDirection dir = PathDirection.North | PathDirection.West;
         Debug.Log(dir);
 
         TestDirection dir2 = TestDirection.North | TestDirection.West;
         Debug.Log(dir2);
+    }
+
+    protected override void OnTest2(InputAction.CallbackContext context)
+    {
+        cell.RefreshWall(pathDir);
+    }
+
+    protected override void OnTest3(InputAction.CallbackContext context)
+    {
+        cell.RefreshCorner(cornerMask);
+    }
+
+    protected override void OnTest4(InputAction.CallbackContext context)
+    {
+        CellBase test = new CellBase(0,0);
+        test.MakePath(pathDir);
+        Debug.Log(test.Path);
+        //test.x = 10;
     }
 }
