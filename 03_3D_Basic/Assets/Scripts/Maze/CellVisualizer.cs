@@ -1,0 +1,62 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CellVisualizer : MonoBehaviour
+{
+    /// <summary>
+    /// 셀 한변의 길이를 나타내는 상수
+    /// </summary>
+    public const float CellSize = 10.0f;
+
+    /// <summary>
+    /// 벽 게임 오브젝트의 배열
+    /// </summary>
+    GameObject[] walls;
+
+    /// <summary>
+    /// 코너 게임 오브젝트의 배열
+    /// </summary>
+    GameObject[] corners;
+
+    private void Awake()
+    {
+        Transform child = transform.GetChild(1);        // 벽의 부모
+        
+        walls = new GameObject[child.childCount];       // 벽 배열 만들고 저장하기
+        for (int i = 0; i < walls.Length; i++)
+        {
+            walls[i] = child.GetChild(i).gameObject;
+        }
+
+        child = transform.GetChild(2);                  // 코너의 부모
+        corners = new GameObject[child.childCount];     // 코너 배열 만들고 저장하기
+        for(int i = 0;i < corners.Length;i++)
+        {
+            corners[i] = child.GetChild(i).gameObject;
+        }
+    }
+
+    /// <summary>
+    /// 입력받은 데이터에 맞게 벽의 활성화 여부 재설정
+    /// </summary>
+    /// <param name="flagData">벽의 on/off를 표시하는 비트마스크</param>
+    public void RefreshWall(Direction flagData)
+    {
+        // flagData : 북동남서 순서대로 1이 세팅되어 있으면 길(=벽이 없음), 0이 세팅되어 있으면 벽.
+        // 0000 ~ 1111
+        // 0001 : 북쪽에만 길이 있고 동남서는 벽이다.
+        // 0110 : 동쪽과 남쪽에는 길이 있고 북쪽과 서쪽은 벽이다.       
+
+    }
+
+    public void RefreshCorner(Direction flagData)
+    {
+    }
+
+
+    public Direction GetPath()
+    {
+        return Direction.None;
+    }
+}
