@@ -70,6 +70,31 @@ public class MazeBase
     /// <param name="to">도착셀</param>
     protected void ConnectPath(CellBase from, CellBase to)
     {
+        Vector2Int dir = new(to.X - from.X, to.Y - from.Y); // from에서 to로 가는 방향 구하기
+        if (dir.x > 0)
+        {
+            // (1,0) 동쪽
+            from.MakePath(PathDirection.East);
+            to.MakePath(PathDirection.West);
+        }
+        else if (dir.x < 0)
+        {
+            // (-1,0) 서쪽
+            from.MakePath(PathDirection.West);
+            to.MakePath(PathDirection.East);
+        }
+        else if (dir.y > 0 )
+        {
+            // (0,1) 남쪽
+            from.MakePath(PathDirection.South);
+            to.MakePath(PathDirection.North);
+        }
+        else if (dir.y < 0)
+        {
+            // (0,-1) 북쪽
+            from.MakePath(PathDirection.North);
+            to.MakePath(PathDirection.South);
+        }
     }
 
     /// <summary>
@@ -80,7 +105,7 @@ public class MazeBase
     /// <returns>true면 미로 그리드 안, false면 밖</returns>
     protected bool IsInGrid(int x, int y)
     {
-        return false;
+        return x >= 0 && y >= 0 && x < width && y < height;
     }
 
     /// <summary>
@@ -90,7 +115,7 @@ public class MazeBase
     /// <returns>true면 미로 그리드 안, false면 밖</returns>
     protected bool IsInGrid(Vector2Int grid)
     {
-        return false;
+        return IsInGrid(grid.x, grid.y);
     }
 
     /// <summary>
@@ -100,7 +125,7 @@ public class MazeBase
     /// <returns></returns>
     protected Vector2Int IndexToGrid(int index)
     {
-        return Vector2Int.zero;
+        return new Vector2Int(index % width, index / width);
     }
 
     /// <summary>
@@ -111,7 +136,7 @@ public class MazeBase
     /// <returns>cells 배열의 인덱스</returns>
     protected int GridToIndex(int x, int y)
     {
-        return 0;
+        return x + y * width;
     }
 
     /// <summary>
@@ -121,7 +146,7 @@ public class MazeBase
     /// <returns>cells 배열의 인덱스</returns>
     protected int GridToIndex(Vector2Int grid)
     {
-        return 0;
+        return GridToIndex(grid.x, grid.y);
     }
 
     /// <summary>
@@ -132,6 +157,11 @@ public class MazeBase
     /// <returns>(x,y)위치에 있는 셀</returns>
     public CellBase GetCell(int x, int y)
     {
-        return null;
+        CellBase cell = null;
+        if( IsInGrid(x, y) )    // 미로 영역안에 포함되는 경우만 처리
+        {
+            cell = cells[GridToIndex(x, y)];
+        }
+        return cell;
     }
 }
