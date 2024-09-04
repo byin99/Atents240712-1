@@ -143,6 +143,16 @@ public class Player : MonoBehaviour, IPlatformRide
         Use();
     }
 
+    void Start()
+    {
+        VirtualStick stick = GameManager.Instance.Stick;
+        if (stick != null)
+        {
+            // 델리게이트에 람다식 연결(0.05보다 더 움직일때만 움직인다고 전달)
+            stick.onMoveInput += (inputDelta) => SetInput(inputDelta, inputDelta.sqrMagnitude > 0.0025f);
+        }
+    }
+
     private void Update()
     {
         JumpCoolRemains -= Time.deltaTime;  // 점프 쿨타임 줄이기
