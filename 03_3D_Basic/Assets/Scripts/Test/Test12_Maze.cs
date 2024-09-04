@@ -19,6 +19,8 @@ public class Test12_Maze : TestBase
     public CornerMask cornerMask;
     public CellVisualizer cell;
 
+    public MazeVisualizer mazeVisualizer;
+
     protected override void OnTest1(InputAction.CallbackContext context)
     {
         PathDirection dir = PathDirection.North | PathDirection.West;
@@ -48,9 +50,14 @@ public class Test12_Maze : TestBase
 
     protected override void OnTest5(InputAction.CallbackContext context)
     {
-        int[] intArray = new int[10];
-        int[,] int2dArray = new int[3, 4];  // 가로로 4, 세로로 3
-        int2dArray[1, 2] = 10;
-        // C# 이차원 배열은 데이터에 접근할 때 매우 느리다 == 배열을 쓰는 의미가 없어진다.
+        //int[] intArray = new int[10];
+        //int[,] int2dArray = new int[3, 4];  // 가로로 4, 세로로 3
+        //int2dArray[1, 2] = 10;
+        //// C# 이차원 배열은 데이터에 접근할 때 매우 느리다 == 배열을 쓰는 의미가 없어진다.
+        ///
+
+        MazeBase maze = new WilsonMaze(5,5,seed);
+        mazeVisualizer.Clear();
+        mazeVisualizer.Draw(maze);
     }
 }

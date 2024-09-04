@@ -122,6 +122,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &864514092
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 864514094}
+  - component: {fileID: 864514093}
+  m_Layer: 0
+  m_Name: Maze
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &864514093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 864514092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f64f596b470f3594c9db41466a8f5b07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellPrefab: {fileID: 6260871853316583956, guid: 9247f42d495e90b48b1e7c8b8ae9f632, type: 3}
+--- !u!4 &864514094
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 864514092}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1669771449
 GameObject:
   m_ObjectHideFlags: 0
@@ -151,10 +196,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a10e666e9bc93a1479cd49097240d5a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: -1
+  seed: 0
   pathDir: 0
   cornerMask: 0
   cell: {fileID: 1950615328}
+  mazeVisualizer: {fileID: 864514093}
 --- !u!4 &1669771451
 Transform:
   m_ObjectHideFlags: 0
@@ -375,17 +421,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1721132487646751438, guid: 9247f42d495e90b48b1e7c8b8ae9f632, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6260871853316583956, guid: 9247f42d495e90b48b1e7c8b8ae9f632, type: 3}
       propertyPath: m_Name
       value: Cell
-      objectReference: {fileID: 0}
-    - target: {fileID: 6638769866491505402, guid: 9247f42d495e90b48b1e7c8b8ae9f632, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7096367470473102627, guid: 9247f42d495e90b48b1e7c8b8ae9f632, type: 3}
       propertyPath: m_LocalPosition.x
@@ -440,3 +478,4 @@ SceneRoots:
   - {fileID: 2019082969}
   - {fileID: 1669771451}
   - {fileID: 6352729187717216915}
+  - {fileID: 864514094}
