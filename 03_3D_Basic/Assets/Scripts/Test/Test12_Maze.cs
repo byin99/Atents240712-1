@@ -21,6 +21,8 @@ public class Test12_Maze : TestBase
 
     public MazeVisualizer mazeVisualizer;
 
+    public MazeBulder builder;
+
     protected override void OnTest1(InputAction.CallbackContext context)
     {
         PathDirection dir = PathDirection.North | PathDirection.West;
@@ -33,19 +35,22 @@ public class Test12_Maze : TestBase
     protected override void OnTest2(InputAction.CallbackContext context)
     {
         cell.RefreshWall(pathDir);
+        cell.RefreshCorner(cornerMask);
     }
 
     protected override void OnTest3(InputAction.CallbackContext context)
     {
-        cell.RefreshCorner(cornerMask);
+        CellBase test = new CellBase(0, 0);
+        test.MakePath(pathDir);
+        Debug.Log(test.Path);
+        //test.x = 10;
     }
 
     protected override void OnTest4(InputAction.CallbackContext context)
     {
-        CellBase test = new CellBase(0,0);
-        test.MakePath(pathDir);
-        Debug.Log(test.Path);
-        //test.x = 10;
+        MazeBase maze = new WilsonMaze(5, 5, seed);
+        mazeVisualizer.Clear();
+        mazeVisualizer.Draw(maze);
     }
 
     protected override void OnTest5(InputAction.CallbackContext context)
@@ -56,8 +61,6 @@ public class Test12_Maze : TestBase
         //// C# 이차원 배열은 데이터에 접근할 때 매우 느리다 == 배열을 쓰는 의미가 없어진다.
         ///
 
-        MazeBase maze = new WilsonMaze(5,5,seed);
-        mazeVisualizer.Clear();
-        mazeVisualizer.Draw(maze);
+        builder.Build();
     }
 }

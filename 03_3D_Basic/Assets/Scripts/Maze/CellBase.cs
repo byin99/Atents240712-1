@@ -77,7 +77,7 @@ public class CellBase
     }
 
     /// <summary>
-    /// dir1,dir2가 코너를 이루는지 확인하는 함수
+    /// dir1,dir2가 코너를 이루고 길이 있는지 확인하는 함수
     /// </summary>
     /// <param name="dir1">확인할 방향1</param>
     /// <param name="dir2">확인할 방향2</param>
