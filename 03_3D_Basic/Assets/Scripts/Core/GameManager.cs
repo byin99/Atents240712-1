@@ -14,25 +14,35 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public Player Player => player;
 
-    /// <summary>
-    /// 가상 스틱
-    /// </summary>
-    VirtualStick stick;
+    ///// <summary>
+    ///// 가상 스틱
+    ///// </summary>
+    //VirtualStick stick;
+
+    ///// <summary>
+    ///// 가상 스틱 확인용 프로퍼티
+    ///// </summary>
+    //public VirtualStick Stick => stick;
+
+    ///// <summary>
+    ///// 가상버튼(점프)
+    ///// </summary>
+    //VirtualButton jumpButton;
+
+    ///// <summary>
+    ///// 가상버튼(점프) 확인용 프로퍼티
+    ///// </summary>
+    //public VirtualButton JumpButton => jumpButton;
 
     /// <summary>
-    /// 가상 스틱 확인용 프로퍼티
+    /// 가상 패드
     /// </summary>
-    public VirtualStick Stick => stick;
+    VirtualPad virtualPad;
 
     /// <summary>
-    /// 가상버튼(점프)
+    /// 가상패드 참조용 프로퍼티
     /// </summary>
-    VirtualButton jumpButton;
-
-    /// <summary>
-    /// 가상버튼(점프) 확인용 프로퍼티
-    /// </summary>
-    public VirtualButton JumpButton => jumpButton;
+    public VirtualPad VirtualPad => virtualPad;
 
 
     /// <summary>
@@ -41,8 +51,10 @@ public class GameManager : Singleton<GameManager>
     protected override void OnInitialize()
     {
         player = FindAnyObjectByType<Player>();        
-        stick = FindAnyObjectByType<VirtualStick>();
-        jumpButton = FindAnyObjectByType<VirtualButton>();
+        //stick = FindAnyObjectByType<VirtualStick>();
+        //jumpButton = FindAnyObjectByType<VirtualButton>();
+
+        virtualPad = FindAnyObjectByType<VirtualPad>();
     }
 
 
