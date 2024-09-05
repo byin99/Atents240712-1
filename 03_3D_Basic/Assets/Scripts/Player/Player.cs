@@ -145,20 +145,6 @@ public class Player : MonoBehaviour, IPlatformRide
 
     void Start()
     {
-        //VirtualStick stick = GameManager.Instance.Stick;
-        //if (stick != null)
-        //{
-        //    // 델리게이트에 람다식 연결(0.05보다 더 움직일때만 움직인다고 전달)
-        //    stick.onMoveInput += (inputDelta) => SetInput(inputDelta, inputDelta.sqrMagnitude > 0.0025f);
-        //}
-
-        //VirtualButton button = GameManager.Instance.JumpButton;
-        //if(button != null)
-        //{
-        //    button.onClick += Jump;
-        //    onJumpCoolTimeChange += button.RefreshCoolTime;
-        //}
-
         VirtualPad virtualPad = GameManager.Instance.VirtualPad;
         virtualPad.SetStickBind(0, (inputDelta) => SetInput(inputDelta, inputDelta.sqrMagnitude > 0.0025f));
         virtualPad.SetButtonBind(0, Jump, ref onJumpCoolTimeChange);
