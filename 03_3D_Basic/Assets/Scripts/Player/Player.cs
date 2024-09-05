@@ -63,6 +63,16 @@ public class Player : MonoBehaviour, IPlatformRide
     float speedModifier = 1.0f;
 
     /// <summary>
+    /// 플레이어가 살아있는지 여부
+    /// </summary>
+    bool isAlive = true;
+
+    /// <summary>
+    /// 이 플레이어와 연결된 가상패트
+    /// </summary>
+    VirtualPad virtualPad;
+
+    /// <summary>
     /// 지금 점프가 가능한지 확인하는 프로퍼티(바닥에 닿아있고 쿨타임이 다 되었다)
     /// </summary>
     bool IsJumpAvailable => isGrounded && (JumpCoolRemains < 0.0f);
@@ -85,6 +95,11 @@ public class Player : MonoBehaviour, IPlatformRide
     /// </summary>
     public Action<float> onJumpCoolTimeChange;
 
+    /// <summary>
+    /// 이 플레이어가 죽었음을 알리는 델리게이트
+    /// </summary>
+    public Action onDie;
+
     // 컴포넌트들
     Rigidbody rigid;
     Animator animator;
@@ -92,6 +107,7 @@ public class Player : MonoBehaviour, IPlatformRide
     // 애니메이터용 해시
     readonly int IsMove_Hash = Animator.StringToHash("IsMove");
     readonly int IsUse_Hash = Animator.StringToHash("Use");
+    readonly int Die_Hash = Animator.StringToHash("Die");
 
     private void Awake()
     {
@@ -145,9 +161,12 @@ public class Player : MonoBehaviour, IPlatformRide
 
     void Start()
     {
-        VirtualPad virtualPad = GameManager.Instance.VirtualPad;
-        virtualPad.SetStickBind(0, (inputDelta) => SetInput(inputDelta, inputDelta.sqrMagnitude > 0.0025f));
-        virtualPad.SetButtonBind(0, Jump, ref onJumpCoolTimeChange);
+        virtualPad = GameManager.Instance.VirtualPad;
+        if (virtualPad != null)
+        {
+            virtualPad.SetStickBind(0, (inputDelta) => SetInput(inputDelta, inputDelta.sqrMagnitude > 0.0025f));
+            virtualPad.SetButtonBind(0, Jump, ref onJumpCoolTimeChange);
+        }
     }
 
     private void Update()
@@ -225,7 +244,25 @@ public class Player : MonoBehaviour, IPlatformRide
     /// </summary>
     public void Die()
     {
-        Debug.Log("플레이어 죽음");
+        if (isAlive)
+        {
+            Debug.Log("플레이어 죽음");
+
+            animator.SetTrigger(Die_Hash);  // 죽는 애니메이션 보여주기
+            inputActions.Player.Disable();  // 입력처리 중단
+            virtualPad.Disconnect();        // 가상 패드 연결 끊기
+
+            rigid.constraints = RigidbodyConstraints.None;  // 물리 잠금 모두 해제
+            rigid.drag = 0;
+            rigid.angularDrag = 0.01f;
+            Transform head = transform.GetChild(5);
+            rigid.AddForceAtPosition(-transform.forward * 3, head.position, ForceMode.Impulse);
+            rigid.AddTorque(transform.up * 1.5f, ForceMode.Impulse);
+
+
+            onDie?.Invoke();    // 죽었다고 알리기
+            isAlive = false;
+        }
     }
 
     /// <summary>
