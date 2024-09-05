@@ -108,13 +108,13 @@ namespace UnityTemplateProjects
         
         void Update()
         {
-            // Hide and lock cursor when right mouse button pressed
+            // Hide and lock cursor when right mouse jumpButton pressed
             if (Input.GetMouseButtonDown(1))
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
 
-            // Unlock and show cursor when right mouse button released
+            // Unlock and show cursor when right mouse jumpButton released
             if (Input.GetMouseButtonUp(1))
             {
                 Cursor.visible = true;

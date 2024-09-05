@@ -24,6 +24,16 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public VirtualStick Stick => stick;
 
+    /// <summary>
+    /// 가상버튼(점프)
+    /// </summary>
+    VirtualButton jumpButton;
+
+    /// <summary>
+    /// 가상버튼(점프) 확인용 프로퍼티
+    /// </summary>
+    public VirtualButton JumpButton => jumpButton;
+
 
     /// <summary>
     /// 초기화용 함수
@@ -32,6 +42,7 @@ public class GameManager : Singleton<GameManager>
     {
         player = FindAnyObjectByType<Player>();        
         stick = FindAnyObjectByType<VirtualStick>();
+        jumpButton = FindAnyObjectByType<VirtualButton>();
     }
 
 
