@@ -41,3 +41,24 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 3154017325
+    locked: 0
+  - name: Obstacle
+    uniqueID: 243253141
+    locked: 0
+  - name: Road
+    uniqueID: 3909406373
+    locked: 0
+  - name: Object
+    uniqueID: 655998693
+    locked: 0
+  - name: DebugInfo
+    uniqueID: 3083086515
+    locked: 0
+  - name: Slime
+    uniqueID: 812717519
+    locked: 0
+  - name: Player
+    uniqueID: 2028112455
+    locked: 0
