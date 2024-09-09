@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class RoadTile : Tile
 {
     [Flags]
@@ -69,7 +73,11 @@ public class RoadTile : Tile
         int index = GetIndex(mask);             // 인덱스 결정
         if (index > -1 && index < sprites.Length)
         {
-            tileData.sprite = sprites[index];   // 스프라이트 결정
+            tileData.sprite = sprites[index];           // 스프라이트 결정
+            Matrix4x4 matrix = tileData.transform;
+            matrix.SetTRS(Vector3.zero, GetRotation(mask), Vector3.one);    // 행렬에 회전만 설정
+            tileData.transform = matrix;
+            tileData.flags = TileFlags.LockTransform;   // 다른 타일이 회전을 못시키게 잠금
         }
         else
         {
@@ -139,7 +147,45 @@ public class RoadTile : Tile
     {
         Quaternion rotate = Quaternion.identity;
 
+        switch(mask)
+        {
+            case AdjTilePosition.East:
+            case AdjTilePosition.West:
+            case AdjTilePosition.East | AdjTilePosition.West:   // 1자
+            case AdjTilePosition.North | AdjTilePosition.West:  // ㄱ자
+            case AdjTilePosition.All & ~AdjTilePosition.West:   // ㅗ자
+                rotate = Quaternion.Euler(0, 0, -90);
+                break;
+            case AdjTilePosition.North | AdjTilePosition.East:  // ㄱ자
+            case AdjTilePosition.All & ~AdjTilePosition.North:  // ㅗ자
+                rotate = Quaternion.Euler(0, 0, -180);
+                break;
+            case AdjTilePosition.South | AdjTilePosition.East:  // ㄱ자
+            case AdjTilePosition.All & ~AdjTilePosition.East:   // ㅗ자
+                rotate = Quaternion.Euler(0, 0, -270);
+                break;
+        }
 
         return rotate;
     }
+
+#if UNITY_EDITOR
+    [MenuItem("Assets/Create/2D/Tiles/Custom/RoadTile")]    // 메뉴추가
+    public static void CreateRoadTile() // 메뉴가 클릭되었을 때 실행될 함수(이름은 상관없음)
+    {
+        // 창을 열어서 풀 경로 받기
+        string path = EditorUtility.SaveFilePanelInProject(
+            "Save Road Tile",   // 창제목
+            "New Road Tile",    // 기본 파일명
+            "Asset",            // 기본 확장자
+            "Save Road Tile",   // 출력 메세지
+            "Assets/Tiles"      // 열릴 기본 폴더
+            );
+
+        if(path != string.Empty)    // 경로를 받았으면
+        {
+            AssetDatabase.CreateAsset(CreateInstance<RoadTile>(), path);
+        }
+    }
+#endif
 }
