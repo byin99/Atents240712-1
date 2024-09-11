@@ -7,14 +7,34 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     /// <summary>
-    /// 이동 속도
+    /// 이동 속도(기본)
     /// </summary>
     public float speed = 3.0f;
+
+    /// <summary>
+    /// 공격 간격(쿨타임)
+    /// </summary>
+    public float attackInterval = 1.0f;
 
     /// <summary>
     /// 입력받은 방향
     /// </summary>
     Vector2 inputDirection = Vector2.zero;
+
+    /// <summary>
+    /// 현재 공격 쿨타임
+    /// </summary>
+    float attackCoolTime = 0.0f;
+
+    /// <summary>
+    /// 공격 쿨타임이 다 되었는지 확인하기 위한 프로퍼티
+    /// </summary>
+    bool IsAttackReady => attackCoolTime < 0.0f;
+
+    /// <summary>
+    /// 현재 속도
+    /// </summary>
+    float currentSpeed = 3.0f;
 
     // 인풋 액션
     PlayerInputActions inputActions;
@@ -35,6 +55,8 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
 
         inputActions = new PlayerInputActions();
+
+        currentSpeed = speed;
     }
 
     private void OnEnable()
@@ -73,6 +95,30 @@ public class Player : MonoBehaviour
 
     private void OnAttack(InputAction.CallbackContext context)
     {
-        animator.SetTrigger(Attack_Hash);                   // 애니메이터에 공격 알림
+        if (IsAttackReady)
+        {
+            animator.SetTrigger(Attack_Hash);                   // 애니메이터에 공격 알림
+            attackCoolTime = attackInterval;
+            currentSpeed = 0.0f;
+        }
+    }
+
+    private void Update()
+    {
+        attackCoolTime -= Time.deltaTime;
+    }
+
+    private void FixedUpdate()
+    {
+        rigid.MovePosition(rigid.position + Time.fixedDeltaTime * currentSpeed * inputDirection);
+    }
+
+    public void RestoreSpeed()
+    {
+        currentSpeed = speed;
     }
 }
+
+// 1. 캐릭터 실제로 이동 시키기
+// 2. 공격 쿨타임 추가하기
+// 3. 공격 중 이동안하기
