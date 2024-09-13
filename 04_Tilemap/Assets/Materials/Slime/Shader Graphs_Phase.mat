@@ -55,7 +55,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _PhaseThickness: 0.1
-    - _Split: 1
+    - _Split: 0.622
     m_Colors:
-    - _PhaseColor: {r: 0, g: 3.624379, b: 4, a: 0}
+    - _PhaseColor: {r: 0, g: 2.7147312, b: 2.9960787, a: 0}
   m_BuildTextureStacks: []
