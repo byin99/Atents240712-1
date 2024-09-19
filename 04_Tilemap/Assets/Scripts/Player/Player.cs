@@ -100,6 +100,8 @@ public class Player : MonoBehaviour
         animator.SetFloat(InputX_Hash, inputDirection.x);   // 애니메이터에 방향 전달
         animator.SetFloat(InputY_Hash, inputDirection.y);
         animator.SetBool(IsMove_Hash, true);                // 애니메이터에 움직이기 시작했다고 알림
+
+        AttackSensorRotate(inputDirection);                 // 공격 영역 회전시키기
     }
 
     private void OnStop(InputAction.CallbackContext context)
@@ -142,10 +144,35 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 입력 방향에 따라 AttackSensor를 회전시키는 함수
     /// </summary>
-    /// <param name="direction"></param>
+    /// <param name="direction">입력 방향</param>
     void AttackSensorRotate(Vector2 direction)
     {
+        if (direction.y < 0.0f)
+        {
+            // 아래쪽을 바라보고 있다.
+            attackSensorAxis.rotation = Quaternion.identity;
+        }
+        else if (direction.y > 0.0f)
+        {
+            // 위쪽을 바라보고 있다.
+            attackSensorAxis.rotation = Quaternion.Euler(0, 0, 180);
+        }
+        else if (direction.x < 0.0f)
+        {
+            // 왼쪽을 바라보고 있다.
+            attackSensorAxis.rotation = Quaternion.Euler(0, 0, -90);
+        }
+        else if (direction.x > 0.0f)
+        {
+            // 오른쪽을 바라보고 있다.
+            attackSensorAxis.rotation = Quaternion.Euler(0, 0, 90);
+        }
 
+        //if (direction.sqrMagnitude > 0.01f)
+        //{
+        //    float angle = Vector2.SignedAngle(Vector2.down, direction);
+        //    attackSensorAxis.rotation = Quaternion.Euler(0, 0, angle);
+        //}
     }
 }
 
