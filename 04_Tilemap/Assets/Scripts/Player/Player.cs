@@ -42,6 +42,16 @@ public class Player : MonoBehaviour
     /// </summary>
     Transform attackSensorAxis;
 
+    /// <summary>
+    /// 지금 공격이 유효한 상태인지 확인하는 변수
+    /// </summary>
+    bool isAttackValid = false;
+
+    /// <summary>
+    /// 현재 내 공격 범위 안에 있는 모든 슬라임의 목록
+    /// </summary>
+    List<Slime> attackTargetList;
+
     // 인풋 액션
     PlayerInputActions inputActions;
 
@@ -62,15 +72,25 @@ public class Player : MonoBehaviour
 
         attackSensorAxis = transform.GetChild(0);
         AttackSensor sensor = attackSensorAxis.GetComponentInChildren<AttackSensor>();
-        sensor.onSlimeEnter += (slime) =>
+        sensor.onSlimeEnter += (slime) =>       // 공격 범위에 슬라임이 들어왔을 때
         {
-            slime.ShowOutline(true);
+            if(isAttackValid)
+            {
+                slime.Die();                    // 공격이 유효할 때 영역안에 들어오면 즉시 사망
+            }
+            else
+            {
+                attackTargetList.Add(slime);    // 공격이 유효하지 않으면 일단 리스트에 추가
+            }
+            slime.ShowOutline(true);    // 아웃라인 표시하기
         };
-        sensor.onSlimeExit += (slime) =>
+        sensor.onSlimeExit += (slime) =>        // 공격 범위에서 슬라임이 나갔을 때
         {
-            slime.ShowOutline(false);
+            attackTargetList.Remove(slime);     // 공격 대상 리스트에서 제거
+            slime.ShowOutline(false);           // 아웃라인 끄기
         };
 
+        attackTargetList = new List<Slime>(4);
 
         inputActions = new PlayerInputActions();
 
@@ -173,6 +193,27 @@ public class Player : MonoBehaviour
         //    float angle = Vector2.SignedAngle(Vector2.down, direction);
         //    attackSensorAxis.rotation = Quaternion.Euler(0, 0, angle);
         //}
+    }
+
+    /// <summary>
+    /// 공격 애니메이션 진행 중에 공격이 유효해지면 애니메이션 이벤트로 실행할 함수
+    /// </summary>
+    void AttackValid()
+    {
+        isAttackValid = true;                   // 유효하다고 표시하고
+        foreach (var slime in attackTargetList)
+        {
+            slime.Die();                        // 범위 안에 있던 모든 슬라임 죽이기
+        }
+        attackTargetList.Clear();
+    }
+
+    /// <summary>
+    /// 공격 애니메이션 진행 중에 공격이 유효하지 않게 되면 애니메이션 이벤트로 실행할 함수
+    /// </summary>
+    void AttackNotValid()
+    {
+        isAttackValid = false;
     }
 }
 
