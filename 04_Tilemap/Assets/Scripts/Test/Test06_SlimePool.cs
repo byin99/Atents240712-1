@@ -35,5 +35,10 @@ public class Test06_SlimePool : TestBase
     protected override void OnTest4(InputAction.CallbackContext context)
     {
         // 씬에 있는 모든 슬라임이 죽는다.
+        Slime[] slimes = FindObjectsByType<Slime>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (Slime slime in slimes)
+        {
+            slime.Die();
+        }
     }
 }

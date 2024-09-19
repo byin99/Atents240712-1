@@ -62,6 +62,12 @@ public class Slime : RecycleObject
         mainMaterial.SetFloat(DissolveFadeID, 1);       // 디졸브 시작 값으로 설정
     }
 
+    protected override void OnDisable()
+    {
+        // ReturnToPool()에서 할 일을 여기로
+        base.OnDisable();
+    }
+
     IEnumerator StartPhase()
     {
         // PhaseSplitID를 1 -> 0으로 만들기
@@ -83,10 +89,32 @@ public class Slime : RecycleObject
         mainMaterial.SetFloat(PhaseSplitID, 0);         // 숫자 0으로 정리하기
     }
 
-
     public void Die()
     {
         // 죽을 때 Dissolve 작동
+        StartCoroutine(StartDissolve());
+    }
+
+    IEnumerator StartDissolve()
+    {
+        // DissolveFadeID를 1 -> 0으로 만들기
+
+        float fadeNormalize = 1.0f / dissolveDuration;  // 나누기 연산을 줄이기 위해 미리 계산
+        float timeElapsed = 0.0f;                       // 시간 누적용
+
+        while (timeElapsed < dissolveDuration)          // 시간 될때까지 반복
+        {
+            timeElapsed += Time.deltaTime;              // 시간 누적
+
+            //mainMaterial.SetFloat(DissolveFadeID, 1 - (timeElapsed/dissolveDuration));
+            mainMaterial.SetFloat(DissolveFadeID, 1 - (timeElapsed * fadeNormalize));    // fade값을 1 -> 0으로 점점 감소시키기
+
+            yield return null;
+        }
+
+        mainMaterial.SetFloat(DissolveFadeID, 0);       // 숫자 0으로 정리하기
+        
+        gameObject.SetActive(false);                    // 게임 오브젝트 비활성화
     }
 
     /// <summary>
