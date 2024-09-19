@@ -37,6 +37,11 @@ public class Player : MonoBehaviour
     /// </summary>
     float currentSpeed = 3.0f;
 
+    /// <summary>
+    /// AttackSensor의 축
+    /// </summary>
+    Transform attackSensorAxis;
+
     // 인풋 액션
     PlayerInputActions inputActions;
 
@@ -54,6 +59,18 @@ public class Player : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        attackSensorAxis = transform.GetChild(0);
+        AttackSensor sensor = attackSensorAxis.GetComponentInChildren<AttackSensor>();
+        sensor.onSlimeEnter += (slime) =>
+        {
+            slime.ShowOutline(true);
+        };
+        sensor.onSlimeExit += (slime) =>
+        {
+            slime.ShowOutline(false);
+        };
+
 
         inputActions = new PlayerInputActions();
 
@@ -114,9 +131,21 @@ public class Player : MonoBehaviour
         rigid.MovePosition(rigid.position + Time.fixedDeltaTime * currentSpeed * inputDirection);
     }
 
+    /// <summary>
+    /// 속도를 원상복귀 시키는 함수
+    /// </summary>
     public void RestoreSpeed()
     {
         currentSpeed = speed;
+    }
+
+    /// <summary>
+    /// 입력 방향에 따라 AttackSensor를 회전시키는 함수
+    /// </summary>
+    /// <param name="direction"></param>
+    void AttackSensorRotate(Vector2 direction)
+    {
+
     }
 }
 
