@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -114,15 +115,61 @@ public class Test08_ListSort : TestBase
         List<TestSort> list = new List<TestSort>();
 
         temp = new(0, 10.0f, "aaa");
+        list.Add(temp);
         temp = new(4, 20.0f, "eee");
+        list.Add(temp);
         temp = new(1, 50.0f, "ddd");
+        list.Add(temp);
         temp = new(3, 40.0f, "bbb");
+        list.Add(temp);
         temp = new(2, 30.0f, "ccc");
+        list.Add(temp);
 
+        switch (sortType)
+        {
+            case SortType.intType:
+                if( orderType == OrderType.Accending )
+                {
+                    list.Sort((x,y) => x.a.CompareTo(y.a));
+                }
+                else
+                {
+                    list.Sort((x, y) => y.a.CompareTo(x.a));
+                }
+                break;
+            case SortType.floatType:
+                if (orderType == OrderType.Accending)
+                {
+                    list.Sort((x, y) => x.b.CompareTo(y.b));
+                }
+                else
+                {
+                    list.Sort((x, y) => y.b.CompareTo(x.b));
+                }
+                break;
+            case SortType.StringType:
+                if (orderType == OrderType.Accending)
+                {
+                    list.Sort((x, y) => x.c.CompareTo(y.c));
+                }
+                else
+                {
+                    list.Sort((x, y) => y.c.CompareTo(x.c));
+                }
+                break;
+        }
+        TestPrint(list);
+
+        //Comparison<TestSort> comparison = (x, y) => y.c.CompareTo(x.c);   // 따로 변수로 저장하고 싶을 때
+        //list.Sort(comparison);
     }
 
     void TestPrint(List<TestSort> list)
     {
-
+        Debug.Log("리스트 출력");
+        foreach (TestSort sort in list)
+        {
+            Debug.Log($"{sort.a}, {sort.b}, {sort.c}");
+        }
     }
 }
