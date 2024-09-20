@@ -5,6 +5,22 @@ using UnityEngine.InputSystem;
 
 public class Test08_ListSort : TestBase
 {
+    public enum SortType
+    {
+        intType,
+        floatType,
+        StringType
+    }
+
+    public enum OrderType
+    {
+        Accending,
+        Descending,
+    }
+
+    public SortType sortType = SortType.intType;
+    public OrderType orderType = OrderType.Accending;
+
     protected override void OnTest1(InputAction.CallbackContext context)
     {
         List<int> list = new List<int>() { 1, 10, 5, 7, 3 };
@@ -88,6 +104,25 @@ public class Test08_ListSort : TestBase
 
         Vector2Int temp = new Vector2Int(1,0);
         Debug.Log(a == temp);
+
+    }
+
+    protected override void OnTest4(InputAction.CallbackContext context)
+    {
+        // sortType, orderType에 따라 TestSort를 정렬
+        TestSort temp;
+        List<TestSort> list = new List<TestSort>();
+
+        temp = new(0, 10.0f, "aaa");
+        temp = new(4, 20.0f, "eee");
+        temp = new(1, 50.0f, "ddd");
+        temp = new(3, 40.0f, "bbb");
+        temp = new(2, 30.0f, "ccc");
+
+    }
+
+    void TestPrint(List<TestSort> list)
+    {
 
     }
 }
