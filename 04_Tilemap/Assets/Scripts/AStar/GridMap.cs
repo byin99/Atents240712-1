@@ -21,6 +21,12 @@ public class GridMap
     protected int height;
 
     /// <summary>
+    /// 상속받은 클래스에서 public GridMap(int width, int height) 생성자를 안만들어도 되게끔 하기 위한 생성자
+    /// </summary>
+    protected GridMap()
+    { }
+
+    /// <summary>
     /// 생성자
     /// </summary>
     /// <param name="width">맵의 가로 길이</param>
