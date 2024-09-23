@@ -45,7 +45,7 @@ public class TileGridMap : GridMap
             for (int x = min.x; x < max.x; x++)
             {
                 Node.NodeType nodeType = Node.NodeType.Plain;   // 기본 값(tile이 없으면 평지)
-                TileBase tile = obstacle.GetTile(new(x, y));    // 장애물 타일맵에서 타일 가져오기 시도
+                TileBase tile = obstacle.GetTile(new(x, y));    // 장애물 타일맵에서 타일 가져오기 시도                
                 if (tile != null)
                 {
                     nodeType = Node.NodeType.Wall;              // 있으면 그곳은 못가는 지역
@@ -64,13 +64,62 @@ public class TileGridMap : GridMap
 
     protected override int CalcIndex(int x, int y)
     {
-        // x + y * width;
-        return base.CalcIndex(x, y);
+        // 원래 식 : x + y * width;
+        // 원점이 변경됨 : (x - origin.x) + (y - origin.y) * width;
+        // y축이 반대    : (x - origin.x) + ((height - 1) - (y - origin.y)) * width;
+        return (x - origin.x) + ((height - 1) - (y - origin.y)) * width;
     }
 
     public override bool IsValidPosition(int x, int y)
     {
-        // x < width && y < height && x > -1 && y > -1
-        return base.IsValidPosition(x, y);
+        // 원래 식 : x < width && y < height && x > -1 && y > -1
+        return x < (width + origin.x) && y < (height + origin.y) && x >= origin.x && y >= origin.y;
     }
+
+    /// <summary>
+    /// 월드 좌표를 그리드 좌표로 변경하는 함수
+    /// </summary>
+    /// <param name="world">월드 좌표</param>
+    /// <returns>타일맵의 셀 좌표</returns>
+    public Vector2Int WorldToGrid(Vector3 world)
+    {
+        return (Vector2Int)background.WorldToCell(world);
+    }
+
+    /// <summary>
+    /// 그리드 좌표를 월드좌표로 변경하는 함수
+    /// </summary>
+    /// <param name="grid">그리드 좌표</param>
+    /// <returns>셀의 가운데 위치(월드 좌표)</returns>
+    public Vector2 GridToWorld(Vector2Int grid)
+    {
+        return background.CellToWorld((Vector3Int)grid) + new Vector3(0.5f, 0.5f);  // CellToWorld는 셀의 왼쪽 아래의 월드좌표를 리턴
+    }
+
+    /// <summary>
+    /// 이동 가능한 위치 중 랜덤으로 선택해서 리턴하는 함수
+    /// </summary>
+    /// <returns></returns>
+    public Vector2Int GetRandomMovablePostion()
+    {
+        int index = Random.Range(0, movablePositions.Length);
+        return movablePositions[index];
+    }
+
+    /// <summary>
+    /// 월드 좌표를 통해 해당 위치에 있는 노드를 리턴하는 함수
+    /// </summary>
+    /// <param name="world">확인할 위치(월드좌표)</param>
+    /// <returns>해당 위치에 있는 노드</returns>
+    public Node GetNode(Vector3 world)
+    {
+        return GetNode(WorldToGrid(world));
+    }
+
+#if UNITY_EDITOR
+    public int Test_CalcIndex(int x, int y)
+    {
+        return CalcIndex(x, y);
+    }
+#endif
 }
