@@ -167,6 +167,17 @@ public class GridMap
     }
 
     /// <summary>
+    /// 테스트용 GridToIndex
+    /// </summary>
+    /// <param name="grid"></param>
+    /// <returns></returns>
+    public int GridToIndex(Vector2Int grid)
+    {
+        GridToIndex(grid.x, grid.y, out int? index);
+        return index.Value;
+    }
+
+    /// <summary>
     /// 인덱스 값을 그리드 좌표로 변경해주는 함수
     /// </summary>
     /// <param name="index">변경할 인덱스</param>
@@ -196,5 +207,15 @@ public class GridMap
     public virtual bool IsValidPosition(int x, int y)
     {
         return x < width && y < height && x > -1 && y > -1;
+    }
+
+    /// <summary>
+    /// 맵 안인지 확인하는 함수
+    /// </summary>
+    /// <param name="grid">위치</param>
+    /// <returns>true면 맵 안, false면 맵 밖</returns>
+    public bool IsValidPosition(Vector2Int grid)
+    {
+        return IsValidPosition(grid.x, grid.y);
     }
 }
