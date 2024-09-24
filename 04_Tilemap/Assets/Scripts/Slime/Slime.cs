@@ -11,6 +11,11 @@ public class Slime : RecycleObject
     public float moveSpeed = 2.0f;
 
     /// <summary>
+    /// 다른 슬라임에 의해 경로가 막혔을 때 최대로 기다리는 시간
+    /// </summary>
+    public float maxPathWaitTime = 1.0f;
+
+    /// <summary>
     /// 페이즈 진행 시간(등장 연출 시간)
     /// </summary>
     public float phaseDuration = 0.5f;
@@ -59,6 +64,11 @@ public class Slime : RecycleObject
     /// 슬라임의 이동이 활성화 되었는지 여부(true면 움직임, false면 안움직임)
     /// </summary>
     bool isMoveActivate = false;
+
+    /// <summary>
+    /// 다른 슬라임에 의해 경로가 막힌 이후에 기다린 시간
+    /// </summary>
+    float pathWaitTime = 0.0f;
 
     /// <summary>
     /// 머티리얼
@@ -163,30 +173,43 @@ public class Slime : RecycleObject
     {
         if(isMoveActivate)  //isMoveActivate가 활성화 되어 있을 때만 처리
         {
-            // path가 설정되어 있으면 path를 따라 계속 이동한다.
-            if ( path != null && path.Count > 0 )
+            // path가 설정되어 있고, 기다리는 시간도 최대 기다리는 시간보다 작다.
+            if ( path != null && path.Count > 0 && pathWaitTime < maxPathWaitTime)
             {
-                Vector2Int destGrid = path[0];
-            
-                Vector3 destPos = map.GridToWorld(destGrid);
-                Vector3 direction = destPos - transform.position;
+                Vector2Int destGrid = path[0];                      // 다음 목적지의 그리드 좌표
 
-                if( direction.sqrMagnitude < 0.001f )
+                // destGrid가 슬라임이 아니거나, destGrid가 내가 있는 위치(=이 칸이 슬라임이더라도 나는 제외)
+                if (!map.IsSlime(destGrid) || map.GetNode(destGrid) == Current) 
                 {
-                    // 도착했다.
-                    transform.position = destPos;
-                    path.RemoveAt(0);
+                    Vector3 destPos = map.GridToWorld(destGrid);        // 다음 목적지의 월드 좌표
+                    Vector3 direction = destPos - transform.position;   // 다음 목적지로 가는 방향
+
+                    if (direction.sqrMagnitude < 0.001f)   // 다음 목적지까지의 거리 체크
+                    {
+                        // 도착했다.
+                        transform.position = destPos;       // 오차 보정
+                        path.RemoveAt(0);                   // 도착한 지점을 path에서 제거(첫번째 제거)
+                    }
+                    else
+                    {
+                        // 아직 도착 안함
+                        transform.Translate(Time.deltaTime * moveSpeed * direction.normalized); // 다음 목적지 방향으로 이동
+                        Current = map.GetNode(transform.position);  // Current 설정 시도(노드 변경이 없으면 별다른 처리 없음)
+                    }
+
+                    pathWaitTime = 0;   // 기다리는 시간 초기화
                 }
                 else
                 {
-                    transform.Translate(Time.deltaTime * moveSpeed * direction.normalized);
-                    Current = map.GetNode(transform.position);
+                    // 내가 이동할 위치에 다른 슬라임이 있다.
+                    pathWaitTime += Time.deltaTime;
                 }
             }
             else
             {
                 // 목적지에 도착했다.
-                SetDestination(map.GetRandomMovablePostion());
+                pathWaitTime = 0;   // 기다리는 시간 초기화
+                SetDestination(map.GetRandomMovablePostion());  // 랜덤하게 다음 목적지 설정
             }
         }
     }

@@ -9,6 +9,7 @@ public class Test11_SlimePath : TestBase
     public Tilemap background;
     public Tilemap obstacle;
     public Slime slime;
+    public Slime blockSlime;
 
     TileGridMap map;
 
@@ -17,6 +18,8 @@ public class Test11_SlimePath : TestBase
         map = new TileGridMap(background, obstacle);
         slime.Initialize(map, slime.transform.position);
         slime.ShowPath();
+        blockSlime.Initialize(map, blockSlime.transform.position);
+        blockSlime.ShowPath(false);
     }
 
     protected override void OnTestLClick(InputAction.CallbackContext context)
@@ -31,5 +34,10 @@ public class Test11_SlimePath : TestBase
     {
         // 랜덤한 위치 하나 골라서 이동하기
         slime.SetDestination(map.GetRandomMovablePostion());
+    }
+
+    protected override void OnTest2(InputAction.CallbackContext context)
+    {
+        blockSlime.moveSpeed = 2.0f;
     }
 }
