@@ -1,9 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Slime : RecycleObject
 {
+    /// <summary>
+    /// 슬라임의 이동 속도
+    /// </summary>
+    public float moveSpeed = 2.0f;
+
     /// <summary>
     /// 페이즈 진행 시간(등장 연출 시간)
     /// </summary>
@@ -24,11 +30,63 @@ public class Slime : RecycleObject
     /// </summary>
     public float VisiblePhaseThickness = 0.1f;
 
+    /// <summary>
+    /// 슬라임이 움직일 그리드 맵
+    /// </summary>
+    TileGridMap map;
+
+    /// <summary>
+    /// 슬라임이 따라 움직일 경로
+    /// </summary>
+    List<Vector2Int> path;
+
+    /// <summary>
+    /// 슬라임이 이동할 경로를 그려주는 객체
+    /// </summary>
+    PathLine pathLine;
+
+    /// <summary>
+    /// 이 슬라임이 위치하고 있는 노드
+    /// </summary>
+    Node current = null;
+
+    /// <summary>
+    /// 경로를 보여줄지 말지 결정하는 변수
+    /// </summary>
+    bool isShowPath = false;
 
     /// <summary>
     /// 머티리얼
     /// </summary>
     Material mainMaterial;
+
+    /// <summary>
+    /// 현재 슬라임의 위치를 그리드 좌표로 알려주는 프로퍼티
+    /// </summary>
+    Vector2Int GridPosition => map.WorldToGrid(transform.position);
+
+    /// <summary>
+    /// 슬라임이 위치한 노드 확인 및 변경용 프로퍼티
+    /// </summary>
+    Node Current
+    {
+        get => current;
+        set
+        {
+            if (current != value)       // current에 변화가 있을 때
+            {
+                if( current != null )   // 기존 current가 null 아니었다면
+                {
+                    current.nodeType = Node.NodeType.Plain; // 노드의 타입을 plain으로 되돌리기
+                }
+                current = value;
+                if (current != null)    // 새 current가 null이 아니라면
+                {
+                    current.nodeType = Node.NodeType.Slime; // 노드의 타입을 Slime으로 변경하기
+                }
+            }
+        }
+    }
 
     // 쉐이더 프로퍼티용 ID들
     readonly int OutlineThicknessID = Shader.PropertyToID("_OutlineThickness");
@@ -66,6 +124,31 @@ public class Slime : RecycleObject
     {
         // ReturnToPool()에서 할 일을 여기로
         base.OnDisable();
+    }
+
+    private void Update()
+    {
+        MoveUpdate();
+    }
+
+    /// <summary>
+    /// 슬라임 초기화 함수(스폰 직후에 실행해야 함)
+    /// </summary>
+    /// <param name="map">슬라임이 존재할 타일그리드맵</param>
+    /// <param name="worldPos">슬라임의 시작위치(월드좌표)</param>
+    public void Initialize(TileGridMap map, Vector3 worldPos)
+    {
+        this.map = map;         // 맵 저장
+        transform.position = map.GridToWorld(map.WorldToGrid(worldPos));    // worldPos가 있는 셀의 가운데 위치에 배치
+        Current = map.GetNode(worldPos);
+    }
+
+    /// <summary>
+    /// Update에서 이동 처리하는 함수
+    /// </summary>
+    private void MoveUpdate()
+    {
+        // path가 설정되어 있으면 path를 따라 계속 이동한다.
     }
 
     IEnumerator StartPhase()
@@ -126,4 +209,47 @@ public class Slime : RecycleObject
         // isShow가 true면 VisibleOutlineThickness, 아니면 0으로 세팅
         mainMaterial.SetFloat(OutlineThicknessID, isShow ? VisibleOutlineThickness : 0);  
     }
+
+    /// <summary>
+    /// 슬라임의 목적지를 지정하는 함수
+    /// </summary>
+    /// <param name="destination">목적지(그리드 좌표)</param>
+    public void SetDestination(Vector2Int destination)
+    {
+        path = AStar.PathFind(map, GridPosition, destination);  // 경로 찾기
+        if(isShowPath)
+        {
+            pathLine.DrawPath(map, path);   // 경로 그려주기
+        }
+    }
+
+    /// <summary>
+    /// 슬라임의 목적지를 지정하는 함수
+    /// </summary>
+    /// <param name="destination">목적지(월드좌표)</param>
+    public void SetDestination(Vector3 destination)
+    {
+        Vector2Int grid = map.WorldToGrid(destination);
+        if (map.IsValidPosition(grid) && map.IsPlain(grid)) // 지정 가능한 위치인지 확인
+        {
+            SetDestination(grid);
+        }
+    }
+
+    /// <summary>
+    /// 경로를 보여줄지 말지 결정하는 함수
+    /// </summary>
+    /// <param name="isShow">true면 보여주고, false면 보여주지 않는다.</param>
+    public void ShowPath(bool isShow = true)
+    {
+        isShowPath = isShow;
+        if (isShowPath)
+        {
+            pathLine.DrawPath(map, path);
+        }
+        else
+        {
+            pathLine.ClearPath();
+        }
+}
 }
