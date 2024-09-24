@@ -56,6 +56,11 @@ public class Slime : RecycleObject
     bool isShowPath = false;
 
     /// <summary>
+    /// 슬라임의 이동이 활성화 되었는지 여부(true면 움직임, false면 안움직임)
+    /// </summary>
+    bool isMoveActivate = false;
+
+    /// <summary>
     /// 머티리얼
     /// </summary>
     Material mainMaterial;
@@ -101,7 +106,9 @@ public class Slime : RecycleObject
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         mainMaterial = spriteRenderer.material;
-        
+
+        path = new List<Vector2Int>();
+        pathLine = GetComponentInChildren<PathLine>();
     }
 
     protected override void OnEnable()
@@ -118,11 +125,17 @@ public class Slime : RecycleObject
         mainMaterial.SetFloat(PhaseThicknessID, VisiblePhaseThickness); // 페이즈 두깨 원상복구 시키기
         mainMaterial.SetFloat(PhaseSplitID, 1);         // 페이즈 시작 값으로 설정
         mainMaterial.SetFloat(DissolveFadeID, 1);       // 디졸브 시작 값으로 설정
+
+        isMoveActivate = false;     // 이동 비활성화
     }
 
     protected override void OnDisable()
     {
         // ReturnToPool()에서 할 일을 여기로
+        
+        path.Clear();
+        pathLine.ClearPath();
+
         base.OnDisable();
     }
 
@@ -148,7 +161,34 @@ public class Slime : RecycleObject
     /// </summary>
     private void MoveUpdate()
     {
-        // path가 설정되어 있으면 path를 따라 계속 이동한다.
+        if(isMoveActivate)  //isMoveActivate가 활성화 되어 있을 때만 처리
+        {
+            // path가 설정되어 있으면 path를 따라 계속 이동한다.
+            if ( path != null && path.Count > 0 )
+            {
+                Vector2Int destGrid = path[0];
+            
+                Vector3 destPos = map.GridToWorld(destGrid);
+                Vector3 direction = destPos - transform.position;
+
+                if( direction.sqrMagnitude < 0.001f )
+                {
+                    // 도착했다.
+                    transform.position = destPos;
+                    path.RemoveAt(0);
+                }
+                else
+                {
+                    transform.Translate(Time.deltaTime * moveSpeed * direction.normalized);
+                    Current = map.GetNode(transform.position);
+                }
+            }
+            else
+            {
+                // 목적지에 도착했다.
+                SetDestination(map.GetRandomMovablePostion());
+            }
+        }
     }
 
     IEnumerator StartPhase()
@@ -170,12 +210,14 @@ public class Slime : RecycleObject
 
         mainMaterial.SetFloat(PhaseThicknessID, 0);     // 페이즈 선 안보이게 만들기
         mainMaterial.SetFloat(PhaseSplitID, 0);         // 숫자 0으로 정리하기
+
+        isMoveActivate = true;                          // 움직이기 시작
     }
 
     public void Die()
     {
-        // 죽을 때 Dissolve 작동
-        StartCoroutine(StartDissolve());
+        isMoveActivate = false;             // 죽으면 이동중지
+        StartCoroutine(StartDissolve());    // 죽을 때 Dissolve 작동
     }
 
     IEnumerator StartDissolve()
