@@ -76,6 +76,11 @@ public class Slime : RecycleObject
     Material mainMaterial;
 
     /// <summary>
+    /// 이 슬라임이 생성된 풀의 트랜스폼
+    /// </summary>
+    Transform pool;
+
+    /// <summary>
     /// 현재 슬라임의 위치를 그리드 좌표로 알려주는 프로퍼티
     /// </summary>
     Vector2Int GridPosition => map.WorldToGrid(transform.position);
@@ -103,6 +108,11 @@ public class Slime : RecycleObject
         }
     }
 
+    /// <summary>
+    /// 슬라임이 죽었음을 알리는 델리게이트
+    /// </summary>
+    public Action onDie;
+
     // 쉐이더 프로퍼티용 ID들
     readonly int OutlineThicknessID = Shader.PropertyToID("_OutlineThickness");
     readonly int PhaseSplitID = Shader.PropertyToID("_PhaseSplit");
@@ -119,6 +129,8 @@ public class Slime : RecycleObject
 
         path = new List<Vector2Int>();
         pathLine = GetComponentInChildren<PathLine>();
+
+        pool = transform.parent;
     }
 
     protected override void OnEnable()
@@ -136,15 +148,12 @@ public class Slime : RecycleObject
         mainMaterial.SetFloat(PhaseSplitID, 1);         // 페이즈 시작 값으로 설정
         mainMaterial.SetFloat(DissolveFadeID, 1);       // 디졸브 시작 값으로 설정
 
+        ShowPath(GameManager.Instance.ShowSlimePath);   // 게임 매니저에 설정된대로 슬라임의 경로 보이기
         isMoveActivate = false;     // 이동 비활성화
     }
 
     protected override void OnDisable()
     {
-        // ReturnToPool()에서 할 일을 여기로
-        
-        path.Clear();
-        pathLine.ClearPath();
 
         base.OnDisable();
     }
@@ -240,6 +249,8 @@ public class Slime : RecycleObject
     public void Die()
     {
         isMoveActivate = false;             // 죽으면 이동중지
+        onDie?.Invoke();                    // 죽었다고 알리기
+        onDie = null;                       // 연결된 함수 모두 제거
         StartCoroutine(StartDissolve());    // 죽을 때 Dissolve 작동
     }
 
@@ -261,8 +272,8 @@ public class Slime : RecycleObject
         }
 
         mainMaterial.SetFloat(DissolveFadeID, 0);       // 숫자 0으로 정리하기
-        
-        gameObject.SetActive(false);                    // 게임 오브젝트 비활성화
+
+        ReturnToPool();     // 비활성화하면서 각종 마무리 작업 처리
     }
 
     /// <summary>
@@ -316,5 +327,19 @@ public class Slime : RecycleObject
         {
             pathLine.ClearPath();
         }
-}
+    }
+
+    /// <summary>
+    /// 비활성화 하면서 처리해야 할 코드들
+    /// </summary>
+    public void ReturnToPool()
+    {
+        path.Clear();                   // 경로 제거
+        pathLine.ClearPath();           // pathLine 안보이게 하기
+
+        transform.SetParent(pool);      // 부모를 풀로 재설정
+        Current = null;                 // current 비워서 해당 노드가 plain이 되게 만들기
+
+        gameObject.SetActive(false);    // 게임 오브젝트 비활성화
+    }
 }
