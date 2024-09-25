@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Slime : RecycleObject
@@ -119,12 +120,14 @@ public class Slime : RecycleObject
     readonly int PhaseThicknessID = Shader.PropertyToID("_PhaseThickness");
     readonly int DissolveFadeID = Shader.PropertyToID("_DissolveFade");
 
+    // 컴포넌트들
+    SpriteRenderer spriteRenderer;
 
     // 슬라임은 풀로 관리된다. 팩토리를 이용해 생성할 수 있다.
 
     private void Awake()
     {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         mainMaterial = spriteRenderer.material;
 
         path = new List<Vector2Int>();
@@ -205,6 +208,9 @@ public class Slime : RecycleObject
                         transform.Translate(Time.deltaTime * moveSpeed * direction.normalized); // 다음 목적지 방향으로 이동
                         Current = map.GetNode(transform.position);  // Current 설정 시도(노드 변경이 없으면 별다른 처리 없음)
                     }
+
+                    // 아래쪽에 있는 슬라임이 위에 그려지게 만들기(order가 작은 것을 먼저 그린다)
+                    spriteRenderer.sortingOrder = -Mathf.FloorToInt(transform.position.y * 100);
 
                     pathWaitTime = 0;   // 기다리는 시간 초기화
                 }
