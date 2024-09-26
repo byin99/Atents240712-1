@@ -130,22 +130,22 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "b9919364-69d0-417e-ba78-d4194b05ccea",
-                    "path": "",
+                    "id": "94e5f705-3d00-4ba0-be62-cb45b978800c",
+                    "path": "<Mouse>/press",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "KM",
                     "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "3297faa2-6642-40e7-8294-a3820c28bbff",
-                    "path": "",
+                    "id": "72bf7963-2e01-439e-92a8-42f16fd1717b",
+                    "path": "<Keyboard>/anyKey",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "KM",
                     "action": "AnyKey",
                     "isComposite": false,
                     "isPartOfComposite": false
