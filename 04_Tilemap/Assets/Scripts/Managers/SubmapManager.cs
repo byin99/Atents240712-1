@@ -233,6 +233,41 @@ public class SubmapManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 지정된 위치 주변 맵은 로딩 요청하고, 그 외의 맵은 로딩해제를 요청하는 함수
+    /// </summary>
+    /// <param name="x">서브맵의 X위치</param>
+    /// <param name="y">서브맵의 Y위치</param>
+    void RefreshScenes(int subX, int subY)
+    {
+        // (0,0) ~ (WidthCount, HeightCount) 사이만 범위로 설정
+        int startX = Mathf.Max(0, subX - 1);
+        int endX = Mathf.Min(WidthCount, subX + 2);
+        int startY = Mathf.Max(0, subY - 1);
+        int endY = Mathf.Min(HeightCount, subY + 2);
+
+        List<Vector2Int> opens = new List<Vector2Int>(9);
+        for (int y = startY; y < endY; y++)
+        {
+            for (int x = startX; x < endX; x++)
+            {
+                RequestAsyncSceneLoad(x, y);        // start ~ end 안에 있는 것은 모두 로딩 요청
+                opens.Add(new Vector2Int(x, y));
+            }
+        }
+
+        for (int y = 0; y < HeightCount; y++)
+        {
+            for (int x = 0; x < WidthCount; x++)
+            {
+                if (!opens.Contains(new Vector2Int(x, y)))  // 로딩 요청한 것이 아니면 모두 로딩 해제
+                {
+                    RequestAsyncSceneUnload(x, y);
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// 맵의 그리드 좌표를 인덱스로 변경해주는 함수
     /// </summary>
     /// <param name="x"></param>
@@ -253,4 +288,33 @@ public class SubmapManager : MonoBehaviour
         Vector2 offset = (Vector2)world - worldOrigine;
         return new Vector2Int((int)(offset.x / submapWidthSize), (int)(offset.y / submapHeightSize));
     }
+
+
+#if UNITY_EDITOR
+    public void Test_LoadScene(int x, int y)
+    {
+        RequestAsyncSceneLoad(x, y);
+    }
+
+    public void Test_UnloadScene(int x, int y) 
+    { 
+        RequestAsyncSceneUnload(x, y); 
+    }
+
+    public void Test_UnloadAll()
+    {
+        for (int y = 0; y < HeightCount; y++)
+        {
+            for (int x = 0; x < WidthCount; x++)
+            {
+                RequestAsyncSceneUnload(x, y);
+            }
+        }
+    }
+
+    public void Test_RefreshScenes(int x, int y)
+    {
+        RefreshScenes(x, y);
+    }
+#endif
 }

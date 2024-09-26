@@ -340,7 +340,7 @@ public class Slime : RecycleObject
     /// </summary>
     public void ReturnToPool()
     {
-        path.Clear();                   // 경로 제거
+        path?.Clear();                  // 경로 제거
         pathLine.ClearPath();           // pathLine 안보이게 하기
 
         transform.SetParent(pool);      // 부모를 풀로 재설정
