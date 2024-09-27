@@ -52,6 +52,16 @@ public class Player : MonoBehaviour
     /// </summary>
     List<Slime> attackTargetList;
 
+    /// <summary>
+    /// 플레이어가 이동할 때 실행될 델리게이트
+    /// </summary>
+    public Action<Vector3> onMove;
+
+    /// <summary>
+    /// 플레이어가 사망했을 때 실행될 델리게이트
+    /// </summary>
+    public Action onDie;
+
     // 인풋 액션
     PlayerInputActions inputActions;
 
@@ -151,6 +161,7 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         rigid.MovePosition(rigid.position + Time.fixedDeltaTime * currentSpeed * inputDirection);
+        onMove?.Invoke(transform.position);
     }
 
     /// <summary>
