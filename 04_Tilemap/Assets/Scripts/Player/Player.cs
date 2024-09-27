@@ -68,6 +68,11 @@ public class Player : MonoBehaviour
     bool isAlive = true;
 
     /// <summary>
+    /// 플레이어가 죽인 슬라임의 수
+    /// </summary>
+    int killCount = -1;
+
+    /// <summary>
     /// 플레이어의 최대 수명을 확인하기 위한 프로퍼티
     /// </summary>
     public float MaxLifeTime => maxLifeTime;
@@ -92,9 +97,30 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// 킬카운트를 확인하고 설정하는 프로퍼티
+    /// </summary>
+    public int KillCount
+    {
+        get => killCount;
+        set
+        {
+            if (killCount != value)
+            {
+                killCount = value;
+                onKillCountChange?.Invoke(killCount);   // 값의 변경이 있을 때만 알림
+            }
+        }
+    }
+
+    /// <summary>
     /// 플레이어의 수명이 변경되었을 때 실행될 델리게이트(float:현재 수명/최대 수명)
     /// </summary>
     public Action<float> onLifeTimeChange;
+
+    /// <summary>
+    /// 플레이어가 킬을 할 때마다 실행되는 델리게이트(int:현재 죽인 슬라임의 수)
+    /// </summary>
+    public Action<int> onKillCountChange;
 
     /// <summary>
     /// 플레이어가 이동할 때 실행될 델리게이트(Vector3:플레이어의 위치)
@@ -170,6 +196,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         LifeTime = MaxLifeTime;
+        KillCount = 0;
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -265,6 +292,7 @@ public class Player : MonoBehaviour
         foreach (var slime in attackTargetList)
         {
             slime.Die();                        // 범위 안에 있던 모든 슬라임 죽이기
+            EnemyKill(slime.LifeTimeBonus);     // 적 킬 처리
         }
         attackTargetList.Clear();
     }
@@ -287,5 +315,15 @@ public class Player : MonoBehaviour
         onLifeTimeChange?.Invoke(0);    // 수명 변화 알리기
         inputActions.Player.Disable();  // 입력 막기
         onDie?.Invoke();                // 죽었다고 알리기
+    }
+
+    /// <summary>
+    /// 적을 죽였을 때 실행될 함수
+    /// </summary>
+    /// <param name="bounus">적 처리 보너스(증가할 수명)</param>
+    void EnemyKill(float bounus)
+    {
+        LifeTime += bounus;
+        KillCount++;
     }
 }
