@@ -18,6 +18,11 @@ public class Player : MonoBehaviour
     public float attackInterval = 1.0f;
 
     /// <summary>
+    /// 플레이어 최대 수명
+    /// </summary>
+    public float maxLifeTime = 1000.0f;
+
+    /// <summary>
     /// 입력받은 방향
     /// </summary>
     Vector2 inputDirection = Vector2.zero;
@@ -53,7 +58,46 @@ public class Player : MonoBehaviour
     List<Slime> attackTargetList;
 
     /// <summary>
-    /// 플레이어가 이동할 때 실행될 델리게이트
+    /// 플레이어의 현재 수명
+    /// </summary>
+    float lifeTime;
+
+    /// <summary>
+    /// 플레이어가 살아있는지 표시하는 변수(true면 살아있다, false면 죽었다)
+    /// </summary>
+    bool isAlive = true;
+
+    /// <summary>
+    /// 플레이어의 최대 수명을 확인하기 위한 프로퍼티
+    /// </summary>
+    public float MaxLifeTime => maxLifeTime;
+
+    float LifeTime
+    {
+        get => lifeTime;
+        set
+        {
+            lifeTime = value;
+            if (isAlive && lifeTime < 0.0f)
+            {
+                // 플레이어 사망
+                Die();
+            }
+            else
+            {
+                lifeTime = Mathf.Clamp(lifeTime, 0.0f, maxLifeTime);    // 넘치거나 0이하로 떨어지지 않게 만들기
+                onLifeTimeChange?.Invoke(lifeTime/maxLifeTime);         // 변화를 알리기
+            }
+        }
+    }
+
+    /// <summary>
+    /// 플레이어의 수명이 변경되었을 때 실행될 델리게이트(float:현재 수명/최대 수명)
+    /// </summary>
+    public Action<float> onLifeTimeChange;
+
+    /// <summary>
+    /// 플레이어가 이동할 때 실행될 델리게이트(Vector3:플레이어의 위치)
     /// </summary>
     public Action<Vector3> onMove;
 
@@ -123,6 +167,11 @@ public class Player : MonoBehaviour
         inputActions.Player.Disable();
     }
 
+    private void Start()
+    {
+        LifeTime = MaxLifeTime;
+    }
+
     private void OnMove(InputAction.CallbackContext context)
     {
         inputDirection = context.ReadValue<Vector2>();      // 입력 받은 방향 저장
@@ -156,6 +205,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         attackCoolTime -= Time.deltaTime;
+        LifeTime -= Time.deltaTime;
     }
 
     private void FixedUpdate()
@@ -226,8 +276,16 @@ public class Player : MonoBehaviour
     {
         isAttackValid = false;
     }
-}
 
-// 1. 캐릭터 실제로 이동 시키기
-// 2. 공격 쿨타임 추가하기
-// 3. 공격 중 이동안하기
+    /// <summary>
+    /// 플레이어가 죽었을 때 실행될 함수
+    /// </summary>
+    private void Die()
+    {
+        isAlive = false;                // 죽었다고 표시
+        LifeTime = 0.0f;                // 수명도 0으로 설정
+        onLifeTimeChange?.Invoke(0);    // 수명 변화 알리기
+        inputActions.Player.Disable();  // 입력 막기
+        onDie?.Invoke();                // 죽었다고 알리기
+    }
+}
