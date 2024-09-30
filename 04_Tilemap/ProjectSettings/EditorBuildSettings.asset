@@ -6,11 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Common/LoadSampleScene.unity
-    guid: 339fa6640143e8043a8256f266dfd1da
-  - enabled: 1
     path: Assets/Scenes/Common/LoadingScene.unity
     guid: ac796cc9dcd22554288e21bfd890d981
+  - enabled: 1
+    path: Assets/Scenes/Seemless/SeemlessBase.unity
+    guid: 6575c0e95e60c7f4cb43c8c130f8ef2f
   - enabled: 1
     path: Assets/Scenes/Seemless/Seemless_0_0.unity
     guid: 3a8c57bfde0da56479a4cb61577f6a1e

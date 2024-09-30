@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -73,6 +72,11 @@ public class Player : MonoBehaviour
     int killCount = -1;
 
     /// <summary>
+    /// 전체 플레이 시간
+    /// </summary>
+    float totalPlayTime = 0.0f;
+
+    /// <summary>
     /// 플레이어의 최대 수명을 확인하기 위한 프로퍼티
     /// </summary>
     public float MaxLifeTime => maxLifeTime;
@@ -111,6 +115,11 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// 전체 플레이 시간을 확인하기 위한 프로퍼티
+    /// </summary>
+    public float TotalPlayTime => totalPlayTime;
 
     /// <summary>
     /// 플레이어의 수명이 변경되었을 때 실행될 델리게이트(float:현재 수명/최대 수명)
@@ -157,6 +166,7 @@ public class Player : MonoBehaviour
             if(isAttackValid)
             {
                 slime.Die();                    // 공격이 유효할 때 영역안에 들어오면 즉시 사망
+                EnemyKill(slime.LifeTimeBonus); // 적 킬 처리
             }
             else
             {
@@ -233,6 +243,10 @@ public class Player : MonoBehaviour
     {
         attackCoolTime -= Time.deltaTime;
         LifeTime -= Time.deltaTime;
+        if (isAlive)
+        {
+            totalPlayTime += Time.deltaTime;
+        }
     }
 
     private void FixedUpdate()

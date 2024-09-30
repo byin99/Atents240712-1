@@ -1,10 +1,75 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameOverPanel : MonoBehaviour
 {
     public float alphaChangeSpeed = 1.0f;
+
+    CanvasGroup canvasGroup;
+    TextMeshProUGUI playTime;
+    TextMeshProUGUI killCount;
+    Button restart;
+
+    Player player;
+
+    private void Awake()
+    {
+        canvasGroup = GetComponent<CanvasGroup>();
+        Transform child = transform.GetChild(1);
+        playTime = child.GetComponent<TextMeshProUGUI>();
+        child = transform.GetChild(2);
+        killCount = child.GetComponent<TextMeshProUGUI>();
+        child = transform.GetChild(3);
+        restart = child.GetComponent<Button>();
+
+        restart.onClick.AddListener(() =>
+        { 
+            StartCoroutine(WaitUnloadAll()); 
+        });
+    }
+
+    private void Start()
+    {
+        canvasGroup.alpha = 0;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
+        player = GameManager.Instance.Player;
+        player.onDie += OnPlayerDie;
+    }
+
+    private void OnPlayerDie()
+    {
+        playTime.text = $"Total Play Time\n\r< {player.TotalPlayTime:f1} sec >";
+        killCount.text = $"Total Kill Count\n\r< {player.KillCount} Kill >";
+        StartCoroutine(StartAlphaChange());
+    }
+
+    IEnumerator StartAlphaChange()
+    {
+        while(canvasGroup.alpha < 1.0f)
+        {
+            canvasGroup.alpha += Time.deltaTime * alphaChangeSpeed;
+            yield return null;
+        }
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+    }
+
+    IEnumerator WaitUnloadAll()
+    {
+        SubmapManager sub = GameManager.Instance.SubmapManager;
+        while(!sub.IsUnloadAll)
+        {
+            yield return null;
+        }
+        SceneManager.LoadScene("LoadingScene");
+    }
 
     // 1. 플레이어가 죽으면 alphaChangeSpeed 속도에 따라 캔버스 그룹의 알파값이 증가한다.
     // 2. 플레이어가 죽으면 플레이어의 전체 플레이 시간과 킬 수를 UI에서 갱신해야 한다.
