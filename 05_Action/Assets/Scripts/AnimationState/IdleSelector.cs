@@ -22,10 +22,35 @@ public class IdleSelector : StateMachineBehaviour
         int select = 0;
 
         // 이전 선택이 0번일 경우에만 일정확률로 1~4를 선택
+        if (prevSelect == 0)
+        {
+            float num = Random.value;
+
+            if( num < 0.01f )
+            {
+                select = 4;         // 1%
+            }
+            else if(num < 0.02f)
+            {
+                select = 3;         // 1%
+            }
+            else if (num < 0.03f)
+            {
+                select = 2;         // 1%
+            }
+            else if (num < 0.04f)
+            {
+                select = 1;         // 1%
+            }
+        }
+
         // testSelect가 Not_Select가 아닌 경우 무조건 설정된 값으로 변경(0~4만 가능)
+        if (testSelect != Not_Select)
+        {
+            select = Mathf.Clamp(testSelect, 0, 4);
+        }
 
-
-
+        prevSelect = select;        // 이전 선택을 기록
         return select;
     }
 }
