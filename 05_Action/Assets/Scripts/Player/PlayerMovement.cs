@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        MoveSpeedChange(MoveState.Stop);    // 일단 정지 상태
+        SetMoveSpeedAndAnimation(MoveState.Stop);    // 일단 정지 상태
     }
 
     private void Update()
@@ -108,12 +108,12 @@ public class PlayerMovement : MonoBehaviour
             Quaternion camY = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);    // 카메라의 Y축 회전만 따로 추출
             direction = camY * direction;                           // direction 방향을 camY만큼 회전 시키기
             targetRotation = Quaternion.LookRotation(direction);    // 목표로하는 회전 설정
-            
-            MoveSpeedChange(currentMoveMode);   // 현재 모드에 맞게 이동 속도와 애니메이션 설정
+
+            SetMoveSpeedAndAnimation(currentMoveMode);   // 현재 모드에 맞게 이동 속도와 애니메이션 설정
         }
         else
         {
-            MoveSpeedChange(MoveState.Stop);    // 정지
+            SetMoveSpeedAndAnimation(MoveState.Stop);    // 정지 
         }
 
         direction = direction.normalized;   // 정규화 시키기
@@ -127,12 +127,12 @@ public class PlayerMovement : MonoBehaviour
         switch( currentMoveMode )
         {
             case MoveState.Walk:                
-                //MoveSpeedChange(MoveState.Run);     // 속도와 애니메이션 변화
                 currentMoveMode = MoveState.Run;    // 상태 변화
+                SetMoveSpeedAndAnimation(MoveState.Run);     // 속도와 애니메이션 변화
                 break;
             case MoveState.Run:
-                //MoveSpeedChange(MoveState.Walk);
                 currentMoveMode = MoveState.Walk;
+                SetMoveSpeedAndAnimation(MoveState.Walk);
                 break;
         }
     }
@@ -141,7 +141,7 @@ public class PlayerMovement : MonoBehaviour
     /// 플레이어 이동 속도 변화와 애니메이션 처리용 함수
     /// </summary>
     /// <param name="mode">설정할 이동 모드</param>
-    void MoveSpeedChange(MoveState mode)
+    void SetMoveSpeedAndAnimation(MoveState mode)
     {
         // 속도와 애니메이션 변경
         switch (mode)
@@ -151,14 +151,14 @@ public class PlayerMovement : MonoBehaviour
                 currentSpeed = 0.0f;
                 break;
             case MoveState.Walk:
-                //if( currentSpeed > 0 )  // 이동 중이면 애니메이션 실행
+                if(direction.sqrMagnitude > 0)      // 움직일 때만 애니메이션 변경하기
                 {
                     animator.SetFloat(Speed_Hash, Animator_WalkSpeed);
                 }
                 currentSpeed = walkSpeed;
                 break;
             case MoveState.Run:
-                //if( currentSpeed > 0 )
+                if (direction.sqrMagnitude > 0)
                 {
                     animator.SetFloat(Speed_Hash, Animator_RunSpeed);
                 }
@@ -168,7 +168,3 @@ public class PlayerMovement : MonoBehaviour
         //Debug.Log(currentSpeed);
     }
 }
-
-// 1. 이동 모드를 변경하면 애니메이션이 변경되고 이동 속도도 변경되어야 함
-// 2. 토글버튼을 눌렀을 때 이동 모드가 변경되어야 한다.(이동 중에도 적용되어야 함)
-// 3. 정지 중에 토글버튼을 눌러도 idle 애니메이션이 나와야 한다.
