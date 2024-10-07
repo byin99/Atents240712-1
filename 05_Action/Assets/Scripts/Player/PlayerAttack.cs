@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Animator), typeof(PlayerMovement))]
 public class PlayerAttack : MonoBehaviour
 {
     /// <summary>
@@ -23,13 +23,16 @@ public class PlayerAttack : MonoBehaviour
 
 
     // 컴포넌트
+    PlayerMovement playerMovement;
     Animator animator;
+
 
     // 애니메이터용 해시
     readonly int Attack_Hash = Animator.StringToHash("Attack");
 
     private void Awake()
     {
+        playerMovement = GetComponent<PlayerMovement>();
         animator = GetComponent<Animator>();
     }
 
@@ -52,7 +55,7 @@ public class PlayerAttack : MonoBehaviour
     void Attack()
     {
         // 쿨타임이 다 되거나, 가만히 서 있거나, 걷기 모드일때만 공격 가능
-        if( coolTime < 0 )
+        if( coolTime < 0 && playerMovement.MoveMode != PlayerMovement.MoveState.Run)
         {
             animator.SetTrigger(Attack_Hash);
             coolTime = maxCoolTime;
