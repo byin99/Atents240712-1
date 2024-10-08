@@ -294,11 +294,79 @@ public class Inventory
     }
 
 
+    // 아이템 덜어내서 임시슬롯에 저장(UI때 작업)
 
-
-
-    // 아이템 덜어내서 임시슬롯에 저장
     // 인벤토리 내 아이템 정렬
+
+    /// <summary>
+    /// 인벤토리를 정렬하는 함수
+    /// </summary>
+    /// <param name="sortCriteria">정렬 기준</param>
+    /// <param name="isAscending">true면 오름차순, false면 내림차순</param>
+    public void SlotSorting(ItemSortCriteria sortCriteria, bool isAscending = true)
+    {
+        List<InvenSlot> sortList = new List<InvenSlot>(slots);  // 정렬용 리스트 만들기(slots 기반)
+
+        switch (sortCriteria)   // 정렬 방법에 따라 스위치 처리
+        {
+            case ItemSortCriteria.Code:
+                sortList.Sort((current, other) =>
+                {
+                    if (current.ItemData == null)   // 비어있는 슬롯은 뒤로 보내기
+                        return 1;
+                    if (other.ItemData == null)
+                        return -1;
+                    if(isAscending)                 // 오름차순/내림차순에 따라 처리
+                        return current.ItemData.code.CompareTo(other.ItemData.code);
+                    else
+                        return other.ItemData.code.CompareTo(current.ItemData.code);
+                });
+                break;
+            case ItemSortCriteria.Name:
+                sortList.Sort((current, other) =>
+                {
+                    if (current.ItemData == null)   // 비어있는 슬롯은 뒤로 보내기
+                        return 1;
+                    if (other.ItemData == null)
+                        return -1;
+                    if (isAscending)                // 오름차순/내림차순에 따라 처리
+                        return current.ItemData.itemName.CompareTo(other.ItemData.itemName);
+                    else
+                        return other.ItemData.itemName.CompareTo(current.ItemData.itemName);
+                });
+                break;
+            case ItemSortCriteria.Price:
+                sortList.Sort((current, other) =>
+                {
+                    if (current.ItemData == null)   // 비어있는 슬롯은 뒤로 보내기
+                        return 1;
+                    if (other.ItemData == null)
+                        return -1;
+                    if (isAscending)                // 오름차순/내림차순에 따라 처리
+                        return current.ItemData.price.CompareTo(other.ItemData.price);
+                    else
+                        return other.ItemData.price.CompareTo(current.ItemData.price);
+                });
+                break;
+            default:
+                break;
+        }
+
+        // 정렬된 데이터를 기준으로 데이터 따로 저장(직접 sortList를 사용하면 데이터가 섞이게 된다(참조를 저장하고 있기 때문에))
+        List<(ItemData, uint, bool)> sortedData = new List<(ItemData, uint, bool)>(SlotCount);
+        foreach (var slot in sortList)
+        {
+            sortedData.Add((slot.ItemData, slot.ItemCount, slot.IsEquipped));
+        }
+
+        int index = 0;
+        foreach(var data in sortedData)
+        {
+            slots[index].AssignSlotItem(data.Item1, data.Item2, data.Item3);// 따로 저장한 내용 순서대로 슬롯에 설정
+            index++;
+        }
+    }
+
     // 인벤토리 정리
 
 #if UNITY_EDITOR
