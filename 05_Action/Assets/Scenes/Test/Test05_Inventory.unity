@@ -270,6 +270,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: -1
+  code: 0
+  from: 0
+  to: 0
 --- !u!4 &563642395
 Transform:
   m_ObjectHideFlags: 0
@@ -602,6 +605,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
+        type: 3}
+      propertyPath: itemDatas.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
+        type: 3}
+      propertyPath: itemDatas.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7290a0b2c39875e449d1e41412226354,
+        type: 2}
+    - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
+        type: 3}
+      propertyPath: itemDatas.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 717e3715343233a4598050c9c226d8fd,
+        type: 2}
+    - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
+        type: 3}
+      propertyPath: itemDatas.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: cc53400214a52554e885843c3842086e,
+        type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -3,36 +3,62 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Test05_Inventory : TestBase
 {
+    public ItemCode code = ItemCode.Misc;
+    [Range(0, 5)]
+    public uint from = 0;
+    [Range(0, 5)]
+    public uint to = 0;
+
+    Inventory inven;
+
+#if UNITY_EDITOR
     private void Start()
     {
-        //Inventory inventory = new Inventory();
-        //InvenSlot slot = inventory.slots[0];
-        //InvenSlot slot = inventory[0];
-
-        uint i = 0;
-        i--;
-        Debug.Log(i);
-
-        //InvenSlot slot = new InvenSlot();
-        //if(slot.ItemData != null )
-        //{
-        //}
-
-        //if(!slot.IsEmpty)
-        //{
-        //}
-
-#if PrintTestLog
-        Debug.Log("Test");
-#endif
-
-        InvenTempSlot tempSlot = new InvenTempSlot();
-        tempSlot.FromIndex = 10;
-        int test = 0;
-
-        ItemData data = GameManager.Instance.ItemData[ItemCode.Misc];
+        inven = new Inventory(null);
+        inven.AddItem(ItemCode.Ruby);
+        inven.AddItem(ItemCode.Sapphire);
+        inven.AddItem(ItemCode.Sapphire);
+        inven.AddItem(ItemCode.Emerald);
+        inven.AddItem(ItemCode.Emerald);
+        inven.AddItem(ItemCode.Emerald);
+        inven.MoveItem(2, 3);
+        inven.Test_InventoryPrint();
     }
+
+    protected override void OnTest1(InputAction.CallbackContext context)
+    {
+        inven.AddItem(code, from);
+        inven.Test_InventoryPrint();
+    }
+
+    protected override void OnTest2(InputAction.CallbackContext context)
+    {
+        inven.RemoveItem(from);
+        inven.Test_InventoryPrint();
+    }
+
+    protected override void OnTest3(InputAction.CallbackContext context)
+    {
+        inven.ClearSlot(from);
+        inven.Test_InventoryPrint();
+    }
+
+    protected override void OnTest4(InputAction.CallbackContext context)
+    {
+        inven.ClearInventory();
+        inven.Test_InventoryPrint();
+    }
+
+    protected override void OnTest5(InputAction.CallbackContext context)
+    {
+        inven.MoveItem(from, to);
+        inven.Test_InventoryPrint();
+    }
+
+
+#endif
 }

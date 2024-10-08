@@ -28,6 +28,11 @@ public class InvenSlot
     bool isEquipped = false;
 
     /// <summary>
+    /// 슬롯의 인덱스를 확인하기 위한 프로퍼티
+    /// </summary>
+    public uint Index => slotIndex;
+
+    /// <summary>
     /// 슬롯에 들어있는 아이템의 종류를 확인하거나 쓰기 위한 프로퍼티(쓰기는 private)
     /// </summary>
     public ItemData ItemData
