@@ -64,10 +64,33 @@ public class InventoryUI : MonoBehaviour
         for(uint i = 0; i < slotsUIs.Length; i++)
         {
             slotsUIs[i].InitializeSlot(inven[i]);       // SlotUI 초기화
+            slotsUIs[i].onDragBegin += OnItemMoveBegin;
+            slotsUIs[i].onDragEnd += OnItemMoveEnd;
         }
         tempSlotUI.InitializeSlot(inven.TempSlot);      // TempSlotUI 초기화
 
         // Close();     // 임시 주석 처리
+    }
+
+    /// <summary>
+    /// 슬롯에서 드래그가 시작되었을 때 실행되는 함수
+    /// </summary>
+    /// <param name="index">드래그가 시작된 슬롯의 인덱스</param>
+    private void OnItemMoveBegin(uint index)
+    {
+        inven.MoveItem(index, tempSlotUI.Index);
+    }
+
+    /// <summary>
+    /// 슬롯에서 드래그가 끝났을 때 실행되는 함수
+    /// </summary>
+    /// <param name="index">드래그가 끝난 슬롯의 index(null이면 드래그가 비정상적으로 끝난 경우)</param>
+    private void OnItemMoveEnd(uint? index)
+    {
+        if (index.HasValue)
+        {
+            inven.MoveItem(tempSlotUI.Index, index.Value);
+        }
     }
 
     private void OnInvenOnOff(InputAction.CallbackContext _)
