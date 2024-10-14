@@ -90,6 +90,7 @@ public class InventoryUI : MonoBehaviour
     /// <param name="index">드래그가 시작된 슬롯의 인덱스</param>
     private void OnItemMoveBegin(uint index)
     {
+        detailInfoUI.IsPaused = true;       // 상세정보창 일시 정지
         inven.MoveItem(index, tempSlotUI.Index);
     }
 
@@ -103,6 +104,7 @@ public class InventoryUI : MonoBehaviour
         {
             inven.MoveItem(tempSlotUI.Index, index.Value);
         }
+        detailInfoUI.IsPaused = false;      // 상세정보창 일시 정지 해제
     }
 
     /// <summary>
