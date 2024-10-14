@@ -7,7 +7,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class InvenSlotUI : SlotUI_Base, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class InvenSlotUI : SlotUI_Base, IDragHandler, IBeginDragHandler, IEndDragHandler, 
+    IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IPointerClickHandler
 {
     /// <summary>
     /// 드래그의 시작을 알리는 델리게이트(uint:드래그를 시작한 슬롯의 인덱스)
@@ -18,6 +19,26 @@ public class InvenSlotUI : SlotUI_Base, IDragHandler, IBeginDragHandler, IEndDra
     /// 드래그의 종료를 알리는 델리게이트(uint?:드래그가 끝난 슬롯의 인덱스(null이면 슬롯이 아닌 곳에서 종료))
     /// </summary>
     public event Action<uint?> onDragEnd;
+
+    /// <summary>
+    /// 마우스 클릭을 알리는 델리게이트(uint:클릭된 슬롯의 인덱스)
+    /// </summary>
+    public event Action<uint> onClick;
+
+    /// <summary>
+    /// 마우스 커서가 슬롯 위로 올라왔음을 알리는 델리게이트(uint:올라간 슬롯의 인덱스)
+    /// </summary>
+    public event Action<uint> onPointerEnter;
+
+    /// <summary>
+    /// 마우스 커서가 슬롯 밖으로 나갔음을 알리는 델리게이트
+    /// </summary>
+    public event Action onPointerExit;
+
+    /// <summary>
+    /// 마우스 커서가 슬롯 위에서 움직임을 알리는 델리게이트(Vector2: 마우스 포인터의 스크린좌표)
+    /// </summary>
+    public event Action<Vector2> onPointerMove;
 
     /// <summary>
     /// 장비표시용 텍스트
@@ -89,5 +110,25 @@ public class InvenSlotUI : SlotUI_Base, IDragHandler, IBeginDragHandler, IEndDra
             Debug.Log("드래그 종료 : 어떤 UI도 없다.");
 #endif
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        onClick?.Invoke(Index);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        onPointerEnter?.Invoke(Index);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        onPointerExit?.Invoke();
+    }
+
+    public void OnPointerMove(PointerEventData eventData)
+    {
+        onPointerMove?.Invoke(eventData.position);
     }
 }

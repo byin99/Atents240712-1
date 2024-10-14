@@ -22,6 +22,11 @@ public class InventoryUI : MonoBehaviour
     /// </summary>
     InvenTempSlotUI tempSlotUI;
 
+    /// <summary>
+    /// 상세 정보창
+    /// </summary>
+    DetailInfoUI detailInfoUI;
+
     // 입력 처리용
     PlayerInputActions inputActions;
 
@@ -42,6 +47,9 @@ public class InventoryUI : MonoBehaviour
 
         child = transform.GetChild(2);
         tempSlotUI = child.GetComponent<InvenTempSlotUI>();
+
+        child = transform.GetChild(3);
+        detailInfoUI = child.GetComponent<DetailInfoUI>();
     }
 
     private void OnEnable()
@@ -66,6 +74,10 @@ public class InventoryUI : MonoBehaviour
             slotsUIs[i].InitializeSlot(inven[i]);       // SlotUI 초기화
             slotsUIs[i].onDragBegin += OnItemMoveBegin;
             slotsUIs[i].onDragEnd += OnItemMoveEnd;
+            slotsUIs[i].onClick += OnSlotClick;
+            slotsUIs[i].onPointerEnter += OnItemDetailInfoOpen;
+            slotsUIs[i].onPointerExit += OnItemDetailInfoClose;
+            slotsUIs[i].onPointerMove += OnSlotPointerMove;
         }
         tempSlotUI.InitializeSlot(inven.TempSlot);      // TempSlotUI 초기화
 
@@ -91,6 +103,40 @@ public class InventoryUI : MonoBehaviour
         {
             inven.MoveItem(tempSlotUI.Index, index.Value);
         }
+    }
+
+    /// <summary>
+    /// 슬롯을 클릭했을 때 실행되는 함수
+    /// </summary>
+    /// <param name="index">클릭한 슬롯의 인덱스</param>
+    private void OnSlotClick(uint index)
+    {
+    }
+
+    /// <summary>
+    /// 마우스 커서가 슬롯위에 들어갔을 때 상세 정보창을 여는 함수
+    /// </summary>
+    /// <param name="index">슬롯의 인덱스</param>
+    private void OnItemDetailInfoOpen(uint index)
+    {
+        detailInfoUI.Open(slotsUIs[index].InvenSlot.ItemData);  // 열기
+    }
+
+    /// <summary>
+    /// 마우스 커서가 슬롯을 나갔을 때 상세 정보창을 닫는 함수
+    /// </summary>
+    private void OnItemDetailInfoClose()
+    {
+        detailInfoUI.Close();
+    }
+
+    /// <summary>
+    /// 마우스 커서가 슬롯 안에서 움직일 때 실행되는 함수
+    /// </summary>
+    /// <param name="screen">마우스 커서의 스크린 좌표</param>
+    private void OnSlotPointerMove(Vector2 screen)
+    {
+        detailInfoUI.MovePosition(screen);
     }
 
     private void OnInvenOnOff(InputAction.CallbackContext _)
