@@ -257,6 +257,16 @@ public class Inventory
     }
 
     /// <summary>
+    /// 인벤토리의 특정 슬롯에서 아이템을 일정량 분리하여 임시 슬롯으로 보내는 함수
+    /// </summary>
+    /// <param name="slotIndex">아이템을 분리할 슬롯</param>
+    /// <param name="count">분리할 개수</param>
+    public void SplitItem(uint slotIndex, uint count)
+    {
+
+    }
+
+    /// <summary>
     /// 슬롯간에 스왑을 하는 함수
     /// </summary>
     /// <param name="slotA">대상1</param>
