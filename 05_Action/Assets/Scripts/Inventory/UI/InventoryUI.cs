@@ -100,11 +100,12 @@ public class InventoryUI : MonoBehaviour
     /// <param name="index">드래그가 끝난 슬롯의 index(null이면 드래그가 비정상적으로 끝난 경우)</param>
     private void OnItemMoveEnd(uint? index)
     {
+        detailInfoUI.IsPaused = false;      // 상세정보창 일시 정지 해제
         if (index.HasValue)
         {
             inven.MoveItem(tempSlotUI.Index, index.Value);
+            detailInfoUI.Open(inven[index.Value].ItemData);
         }
-        detailInfoUI.IsPaused = false;      // 상세정보창 일시 정지 해제
     }
 
     /// <summary>
@@ -113,6 +114,10 @@ public class InventoryUI : MonoBehaviour
     /// <param name="index">클릭한 슬롯의 인덱스</param>
     private void OnSlotClick(uint index)
     {
+        if(!tempSlotUI.InvenSlot.IsEmpty)
+        {
+            OnItemMoveEnd(index);
+        }
     }
 
     /// <summary>

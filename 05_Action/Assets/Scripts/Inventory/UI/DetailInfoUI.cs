@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class DetailInfoUI : MonoBehaviour
@@ -76,6 +77,9 @@ public class DetailInfoUI : MonoBehaviour
             itemName.text = itemData.itemName;
             price.text = itemData.price.ToString("N0"); // 3자리마다 ','찍기
             description.text = itemData.itemDescription;
+
+            canvasGroup.alpha = 0.001f;     // MovePosition를 실행시키기 위해 0보다 커야 함
+            MovePosition(Mouse.current.position.ReadValue());   // 커서 위치로 창을 옮기기
 
             StopAllCoroutines();
             StartCoroutine(FadeIn());
