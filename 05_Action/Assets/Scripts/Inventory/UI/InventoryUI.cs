@@ -19,9 +19,9 @@ public class InventoryUI : MonoBehaviour
     InvenSlotUI[] slotsUIs;
 
     /// <summary>
-    /// 임시 슬롯의 UI
+    /// 아이템 정렬용 패널
     /// </summary>
-    InvenTempSlotUI tempSlotUI;
+    SortPanelUI sortPanelUI;
 
     /// <summary>
     /// 상세 정보창
@@ -32,6 +32,11 @@ public class InventoryUI : MonoBehaviour
     /// 아이템 분리창
     /// </summary>
     ItemSpliterUI itemSpliterUI;
+
+    /// <summary>
+    /// 임시 슬롯의 UI
+    /// </summary>
+    InvenTempSlotUI tempSlotUI;
 
     // 입력 처리용
     PlayerInputActions inputActions;
@@ -52,13 +57,16 @@ public class InventoryUI : MonoBehaviour
         close.onClick.AddListener(Close);
 
         child = transform.GetChild(2);
-        tempSlotUI = child.GetComponent<InvenTempSlotUI>();
+        sortPanelUI = child.GetComponent<SortPanelUI>();
 
         child = transform.GetChild(3);
         detailInfoUI = child.GetComponent<DetailInfoUI>();
 
         child = transform.GetChild(4);
         itemSpliterUI = child.GetComponent<ItemSpliterUI>();
+
+        child = transform.GetChild(5);
+        tempSlotUI = child.GetComponent<InvenTempSlotUI>();
     }
 
     private void OnEnable()
@@ -88,12 +96,23 @@ public class InventoryUI : MonoBehaviour
             slotsUIs[i].onPointerExit += OnItemDetailInfoClose;
             slotsUIs[i].onPointerMove += OnSlotPointerMove;
         }
-        tempSlotUI.InitializeSlot(inven.TempSlot);      // TempSlotUI 초기화
+
+        sortPanelUI.onSortRequest += (sort) =>
+        {
+            bool isAcending = true;
+            if (sort == ItemSortCriteria.Price)
+            {
+                isAcending = false; // 가격만 내림차순으로 정렬
+            }
+            inven.MergeItems();
+            inven.SlotSorting(sort, isAcending);
+        };
 
         itemSpliterUI.onOkClick += OnSpliterOK;
         itemSpliterUI.onCancelClick += OnSpliterCancel;
 
-        // Close();     // 임시 주석 처리
+        tempSlotUI.InitializeSlot(inven.TempSlot);      // TempSlotUI 초기화
+        Close();
     }
 
     /// <summary>
@@ -223,4 +242,10 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    public void Test_Open()
+    {
+        Open();
+    }
+#endif
 }

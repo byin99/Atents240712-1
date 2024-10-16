@@ -1,4 +1,4 @@
-#define PrintTestLog
+//#define PrintTestLog
 
 using System;
 using System.Collections;
@@ -35,12 +35,12 @@ public class Inventory
     /// <summary>
     /// 인벤토리의 수요자
     /// </summary>
-    Player owner;
+    PlayerInventory owner;
 
     /// <summary>
     /// 소유자 확인용 프로퍼티
     /// </summary>
-    public Player Owner => owner;
+    public PlayerInventory Owner => owner;
 
     /// <summary>
     /// 인벤토리 슬롯에 접근하기 위한 인덱서
@@ -59,7 +59,7 @@ public class Inventory
     /// </summary>
     /// <param name="owner">인벤토리의 소유자</param>
     /// <param name="size">인벤토리의 크기(기본값은 6)</param>
-    public Inventory(Player owner, uint size = Default_Inventory_Size)
+    public Inventory(PlayerInventory owner, uint size = Default_Inventory_Size)
     {
         slots = new InvenSlot[size];
         for (uint i = 0; i < slots.Length; i++)
@@ -337,11 +337,6 @@ public class Inventory
         return targetSlot != null;
     }
 
-
-    // 아이템 덜어내서 임시슬롯에 저장(UI때 작업)
-
-    // 인벤토리 내 아이템 정렬
-
     /// <summary>
     /// 인벤토리를 정렬하는 함수
     /// </summary>
@@ -409,6 +404,31 @@ public class Inventory
             slots[index].AssignSlotItem(data.Item1, data.Item2, data.Item3);// 따로 저장한 내용 순서대로 슬롯에 설정
             index++;
         }
+    }
+
+    /// <summary>
+    /// 인벤토리에서 같은 종류의 아이템을 최대한 합치는 작업을 하는 함수
+    /// </summary>
+    public void MergeItems()
+    {
+        uint count = (uint)(slots.Length - 1);
+        for(uint i = 0; i<count;i++)    // i는 0 -> 4
+        {
+            InvenSlot slot = slots[i];
+            for(uint j = count; j>i ;j--)   // j는 5 -> i+1
+            {
+                if(slot.ItemData == slots[j].ItemData)
+                {
+                    MoveItem(j, i);         // 일단 j에 있는 것을 i에 추가하기
+                    if (!slots[j].IsEmpty)  // 추가했는데 capacity때문에 j에 아이템이 남았다면
+                    {
+                        SwapSlot(slots[i+1], slots[j]); // i다음 칸과 j를 스왑하기(같은 종류의 아이템을 한군데 뭉치기 위해)
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 
     // 인벤토리 정리
