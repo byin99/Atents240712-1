@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class InventoryUI : MonoBehaviour
@@ -27,6 +28,11 @@ public class InventoryUI : MonoBehaviour
     /// </summary>
     DetailInfoUI detailInfoUI;
 
+    /// <summary>
+    /// 아이템 분리창
+    /// </summary>
+    ItemSpliterUI itemSpliterUI;
+
     // 입력 처리용
     PlayerInputActions inputActions;
 
@@ -50,6 +56,9 @@ public class InventoryUI : MonoBehaviour
 
         child = transform.GetChild(3);
         detailInfoUI = child.GetComponent<DetailInfoUI>();
+
+        child = transform.GetChild(4);
+        itemSpliterUI = child.GetComponent<ItemSpliterUI>();
     }
 
     private void OnEnable()
@@ -80,6 +89,9 @@ public class InventoryUI : MonoBehaviour
             slotsUIs[i].onPointerMove += OnSlotPointerMove;
         }
         tempSlotUI.InitializeSlot(inven.TempSlot);      // TempSlotUI 초기화
+
+        itemSpliterUI.onOkClick += OnSpliterOK;
+        itemSpliterUI.onCancelClick += OnSpliterCancel;
 
         // Close();     // 임시 주석 처리
     }
@@ -114,7 +126,15 @@ public class InventoryUI : MonoBehaviour
     /// <param name="index">클릭한 슬롯의 인덱스</param>
     private void OnSlotClick(uint index)
     {
-        if(!tempSlotUI.InvenSlot.IsEmpty)
+        if(tempSlotUI.InvenSlot.IsEmpty)
+        {
+            bool isShiftPress = (Keyboard.current.shiftKey.ReadValue() > 0);
+            if (isShiftPress)
+            {
+                ItemSpliterOpen(index); // 쉬프트가 눌려져 있는 상태에서 클릭이 되었다면 아이템 분리창을 열어라
+            }
+        }
+        else
         {
             OnItemMoveEnd(index);
         }
@@ -146,6 +166,19 @@ public class InventoryUI : MonoBehaviour
         detailInfoUI.MovePosition(screen);
     }
 
+
+    private void OnSpliterOK(uint index, uint count)
+    {
+        inven.SplitItem(index, count);
+        //detailInfoUI.IsPaused = false;    // OK눌렀다는 것은 아이템을 들고 있어야 한다는 거니까 일시정지를 풀면 안된다.
+    }
+
+    private void OnSpliterCancel()
+    {
+        detailInfoUI.IsPaused = false;
+    }
+
+
     private void OnInvenOnOff(InputAction.CallbackContext _)
     {
         if(canvasGroup.interactable)
@@ -174,6 +207,16 @@ public class InventoryUI : MonoBehaviour
         canvasGroup.alpha = 0.0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
+    }
+
+    void ItemSpliterOpen(uint index)
+    {
+        InvenSlotUI target = slotsUIs[index];
+        itemSpliterUI.transform.position = target.transform.position + Vector3.up * 100;
+        if( itemSpliterUI.Open(target.InvenSlot) )
+        {
+            detailInfoUI.IsPaused = true;
+        }
     }
 
 }

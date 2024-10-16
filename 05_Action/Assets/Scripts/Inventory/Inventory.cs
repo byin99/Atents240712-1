@@ -1,5 +1,6 @@
 //#define PrintTestLog
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -263,7 +264,14 @@ public class Inventory
     /// <param name="count">분리할 개수</param>
     public void SplitItem(uint slotIndex, uint count)
     {
+        if(IsValidIndex(slotIndex, out InvenSlot slot))
+        {
+            count = Math.Min(count, slot.ItemCount);    // count가 슬롯에 들어있는 개수보다 크다면 슬롯에 들어있는 개수까지만 처리
 
+            TempSlot.AssignSlotItem(slot.ItemData, count);  // 임시 슬롯에 정해진 대로 넣고
+            TempSlot.FromIndex = slotIndex;                 // from 저장하고
+            slot.DecreaseSlotItem(count);                   // 대상 슬롯에서 감소                 
+        }
     }
 
     /// <summary>
