@@ -1149,10 +1149,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: -1
-  code: 0
-  spawnCount: 1
+  code: 1
+  spawnCount: 2
   spawnPosition: {fileID: 18872105}
-  noise: 0
+  noise: 1
 --- !u!1001 &1645027464
 PrefabInstance:
   m_ObjectHideFlags: 0

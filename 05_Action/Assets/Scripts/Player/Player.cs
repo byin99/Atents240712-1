@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
         inputController.onMove += movement.SetDirection;
         inputController.onMoveModeChange += movement.ToggleMoveMode;
         inputController.onAttack += attack.OnAttackInput;
-
+        inputController.onPickUp += inventory.GetPickupItems;
     }
 
     public void Initialize()
