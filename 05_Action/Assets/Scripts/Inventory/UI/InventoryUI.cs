@@ -24,6 +24,11 @@ public class InventoryUI : MonoBehaviour
     SortPanelUI sortPanelUI;
 
     /// <summary>
+    /// 돈 표시용 패널
+    /// </summary>
+    MoneyPanelUI moneyPanelUI;
+
+    /// <summary>
     /// 상세 정보창
     /// </summary>
     DetailInfoUI detailInfoUI;
@@ -60,12 +65,15 @@ public class InventoryUI : MonoBehaviour
         sortPanelUI = child.GetComponent<SortPanelUI>();
 
         child = transform.GetChild(3);
-        detailInfoUI = child.GetComponent<DetailInfoUI>();
+        moneyPanelUI = child.GetComponent<MoneyPanelUI>();
 
         child = transform.GetChild(4);
-        itemSpliterUI = child.GetComponent<ItemSpliterUI>();
+        detailInfoUI = child.GetComponent<DetailInfoUI>();
 
         child = transform.GetChild(5);
+        itemSpliterUI = child.GetComponent<ItemSpliterUI>();
+
+        child = transform.GetChild(6);
         tempSlotUI = child.GetComponent<InvenTempSlotUI>();
     }
 
