@@ -22,7 +22,7 @@ public class ItemObject : RecycleObject
 
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     protected override void OnDisable()
