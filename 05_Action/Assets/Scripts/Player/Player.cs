@@ -12,6 +12,11 @@ public class Player : MonoBehaviour
     /// </summary>
     public Inventory Inventory => inventory.Inventory;
 
+    /// <summary>
+    /// 아이템 획득가능 범위 확인용 프로퍼티(아이템을 버릴 수 있는 최대 거리)
+    /// </summary>
+    public float ItemPickupRange => inventory.itemPickupRange;
+
     // 컴포넌트 들
     CharacterController characterController;
 

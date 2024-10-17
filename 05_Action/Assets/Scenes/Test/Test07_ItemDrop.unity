@@ -1150,7 +1150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: -1
   code: 1
-  spawnCount: 2
+  spawnCount: 3
   spawnPosition: {fileID: 18872105}
   noise: 1
 --- !u!1001 &1645027464
@@ -1165,6 +1165,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 1757769222581683115, guid: be4169b385612e84c9d28dfaf2fa7ff3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5204894539596567935, guid: be4169b385612e84c9d28dfaf2fa7ff3,
         type: 3}

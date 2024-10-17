@@ -49,6 +49,11 @@ public class InventoryUI : MonoBehaviour
     // On/Off용
     CanvasGroup canvasGroup;
 
+    /// <summary>
+    /// 인벤토리 소유주 확인용 프로퍼티
+    /// </summary>
+    public Player Owner => inven.Owner;
+
     private void Awake()
     {
         inputActions = new PlayerInputActions();
@@ -222,8 +227,20 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 마우스 버튼이 떨어지면 실행
+    /// </summary>
+    /// <param name="_"></param>
     private void OnItemDrop(InputAction.CallbackContext _)
     {
+        Vector2 screen = Mouse.current.position.ReadValue();
+        Vector2 diff = screen - (Vector2)transform.position;
+
+        RectTransform rectTransform = (RectTransform)transform;
+        if(!rectTransform.rect.Contains(diff))  // 인벤토리 영역 밖이면
+        {
+            tempSlotUI.ItemDrop(screen);        // 임시 슬롯에 있는 아이템을 screen좌표를 월드좌표로 변환한 위치에 아이템 드랍
+        }
     }
 
     void Open()
