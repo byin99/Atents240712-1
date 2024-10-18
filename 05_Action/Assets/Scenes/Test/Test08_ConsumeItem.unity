@@ -615,8 +615,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: -1
-  code: 6
-  spawnCount: 100
+  code: 7
+  spawnCount: 1
   spawnPosition: {fileID: 484262224}
   noise: 0
 --- !u!1 &484262223
@@ -1278,7 +1278,7 @@ PrefabInstance:
     - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
         type: 3}
       propertyPath: itemDatas.Array.size
-      value: 7
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
         type: 3}
@@ -1297,6 +1297,18 @@ PrefabInstance:
       propertyPath: itemDatas.Array.data[6]
       value: 
       objectReference: {fileID: 11400000, guid: c50ccea5f9a385e48894dca3614fc1b1,
+        type: 2}
+    - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
+        type: 3}
+      propertyPath: itemDatas.Array.data[7]
+      value: 
+      objectReference: {fileID: 11400000, guid: e3791652ebf5a9e488a5ec4e9af437b1,
+        type: 2}
+    - target: {fileID: 6857120654589107104, guid: ac469c50bbdcb344184aa7388d617e9a,
+        type: 3}
+      propertyPath: itemDatas.Array.data[8]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8b6c47ed005d51c40a4df87d5b18ee2f,
         type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

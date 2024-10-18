@@ -10,11 +10,11 @@ public class Test07_ItemPickUpAndDrop : TestBase
     public Transform spawnPosition;
     public bool noise = false;
 
-    Player player;
+    protected Player player;
 
 
 #if UNITY_EDITOR    
-    private void Start()
+    protected virtual void Start()
     {
         spawnPosition = transform.GetChild(0);
 
