@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System;
+using static UnityEngine.UI.GridLayoutGroup;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class InventoryUI : MonoBehaviour
@@ -120,6 +121,10 @@ public class InventoryUI : MonoBehaviour
             inven.MergeItems();
             inven.SlotSorting(sort, isAcending);
         };
+
+        Owner.PlayerInventory.onMoneyChange += moneyPanelUI.Refresh;
+        moneyPanelUI.Refresh(Owner.PlayerInventory.Money);
+        
 
         itemSpliterUI.onOkClick += OnSpliterOK;
         itemSpliterUI.onCancelClick += OnSpliterCancel;

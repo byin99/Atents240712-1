@@ -225,4 +225,13 @@ public class InvenSlot
     public void UseItem(GameObject target)
     {
     }
+
+    /// <summary>
+    /// 델리게이트 연결 초기화 함수
+    /// </summary>
+    public void ClearDeletegates()
+    {
+        onSlotItemChange = null;
+        onItemEquip = null;
+    }
 }
