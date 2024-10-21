@@ -23,5 +23,8 @@ public class Test08_ConsumeItem : Test07_ItemPickUpAndDrop
     protected override void OnTest2(InputAction.CallbackContext context)
     {
         status.HealthHeal(-90);
+        status.ManaRestore(-90);
+
+
     }
 }

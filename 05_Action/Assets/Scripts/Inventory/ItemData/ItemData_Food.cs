@@ -18,7 +18,7 @@ public class ItemData_Food : ItemData, IConsumable
         IHealth health = target.GetComponent<IHealth>();
         if (health != null)
         {
-            health.HealthRegenetateByTick(tickRegen, tickInterval, totalTickCount);
+            health.HealthRegenetateByTick(tickRegen, tickInterval, totalTickCount); // 음식은 틱당 회복
         }
     }
 }
