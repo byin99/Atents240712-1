@@ -48,7 +48,7 @@ public class PlayerStatus : MonoBehaviour, IHealth, IMana
                 }
 
                 hp = Mathf.Clamp(hp, 0.0f, maxHP);
-                onHealthChange?.Invoke(hp); 
+                onHealthChange?.Invoke(hp/maxMP); 
                 //Debug.Log($"Hp : {hp}");
             }
         }

@@ -18,5 +18,5 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: d0c05b9125ed56349a5385e1a77547b7, type: 3}
   price: 300
   maxStackCount: 1
-  totalRegen: 100
+  totalRegen: 50
   duration: 10
