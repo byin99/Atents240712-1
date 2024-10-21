@@ -174,6 +174,11 @@ public class InventoryUI : MonoBehaviour
             {
                 ItemSpliterOpen(index); // 쉬프트가 눌려져 있는 상태에서 클릭이 되었다면 아이템 분리창을 열어라
             }
+            else
+            {
+                // 쉬프트를 누르지 않았다면 아이템 사용이 목적                    
+                inven[index].UseItem(Owner.gameObject);     // 아이템 사용 시도
+            }
         }
         else
         {

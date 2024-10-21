@@ -7,12 +7,6 @@ public class Test08_ConsumeItem : Test07_ItemPickUpAndDrop
 {
     PlayerStatus status;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        code = ItemCode.SilverCoin;
-    }
-
     protected override void Start()
     {
         base.Start();

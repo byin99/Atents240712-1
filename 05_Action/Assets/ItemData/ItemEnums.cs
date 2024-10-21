@@ -11,6 +11,8 @@ public enum ItemCode : byte
     Bread,
     Beer,
     Water,
+    HealingPotion,
+    ManaPotion,
 }
 
 public enum ItemSortCriteria : byte
