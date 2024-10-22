@@ -216,6 +216,11 @@ public class InvenSlot
     /// <param name="target">아이템을 장비할 대상</param>
     public void EquipItem(GameObject target)
     {
+        IEquipable equipable = ItemData as IEquipable;
+        if (equipable != null)
+        {
+            equipable.ToggleEquip(target, this);    // 장비 시도는 무조건 토글로 처리
+        }
     }
 
     /// <summary>

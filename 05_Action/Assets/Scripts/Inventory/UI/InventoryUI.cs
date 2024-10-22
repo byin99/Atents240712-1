@@ -178,6 +178,7 @@ public class InventoryUI : MonoBehaviour
             {
                 // 쉬프트를 누르지 않았다면 아이템 사용이 목적                    
                 inven[index].UseItem(Owner.gameObject);     // 아이템 사용 시도
+                inven[index].EquipItem(Owner.gameObject);   // 아이템 장비 시도
             }
         }
         else

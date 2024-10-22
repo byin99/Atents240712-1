@@ -44,12 +44,12 @@ public class PlayerStatus : MonoBehaviour, IHealth, IMana
     /// <summary>
     /// 플레이어의 장비 공격력
     /// </summary>
-    float attackEquipPower = 5.0f;
+    float attackEquipPower = 0.0f;
 
     /// <summary>
     /// 플레이어의 장비 방어력
     /// </summary>
-    float defenceEquipPower = 1.0f;
+    float defenceEquipPower = 0.0f;
         
     /// <summary>
     /// 플레이어의 HP를 확인하고 설정하기 위한 프로퍼티(설정은 private)

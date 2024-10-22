@@ -148,12 +148,12 @@ public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer, I
     public void EquipItem(EquipType part, InvenSlot slot)
     {
         ItemData_Equip equipItem = slot.ItemData as ItemData_Equip;
-        if (equipItem != null)
+        if (equipItem != null)  // 장비가능한 아이템 일 때만 처리
         {
             Transform partParent = GetEquipParentTransform(part);
-            GameObject obj = Instantiate(equipItem.equipPrefab, partParent);
-            this[part] = slot;
-            slot.IsEquipped = true;
+            GameObject obj = Instantiate(equipItem.equipPrefab, partParent);    // 장비 아이템 생성하고 부모에 장착
+            this[part] = slot;          // 어느 파츠에 장비되었는지 기록
+            slot.IsEquipped = true;     // 슬롯에 장비되었다고 표시하고 알림
 
             float power = 0;
             switch (part)
@@ -167,7 +167,7 @@ public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer, I
                     power = shield.defencePower;
                     break;
             }
-            GameManager.Instance.Status.SetEquipPower(part, power);
+            GameManager.Instance.Status.SetEquipPower(part, power); // 장비의 공격력과 방어력 적용
             Debug.Log($"플레이어 공격력 : {GameManager.Instance.Status.AttackPower}");
             Debug.Log($"플레이어 방어력 : {GameManager.Instance.Status.DefencePower}");
         }
@@ -180,19 +180,19 @@ public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer, I
     public void UnEquipItem(EquipType part)
     {
         InvenSlot slot = partsSlot[(int)part];
-        if(slot != null)
+        if(slot != null)    // 해제할 부위가 장비되어있을 때만 처리
         {
-            Transform partParent = GetEquipParentTransform(part);
-            while(partParent.childCount > 0)
+            Transform partParent = GetEquipParentTransform(part);   // 부모 찾고
+            while(partParent.childCount > 0)    // 부모 안에 있는 모든 자식 제거
             {
                 Transform child = partParent.GetChild(0);
                 child.SetParent(null);
                 Destroy(child.gameObject);
             }
-            slot.IsEquipped = false;
-            this[part] = null;
+            slot.IsEquipped = false;    // 슬롯에 장비 해제되었다고 표시하고 알림
+            this[part] = null;          // 어느 파츠가 장비 해제 되었는지 기록
 
-            GameManager.Instance.Status.SetEquipPower(part, 0);
+            GameManager.Instance.Status.SetEquipPower(part, 0); // 장비 공격력/방어력 초기화
             Debug.Log($"플레이어 공격력 : {GameManager.Instance.Status.AttackPower}");
             Debug.Log($"플레이어 방어력 : {GameManager.Instance.Status.DefencePower}");
         }
