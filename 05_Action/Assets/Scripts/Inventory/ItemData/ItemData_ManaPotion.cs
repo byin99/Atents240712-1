@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 /// <summary>
 /// 마나포션 아이템용 ItemData(지속적으로 회복)
 /// </summary>

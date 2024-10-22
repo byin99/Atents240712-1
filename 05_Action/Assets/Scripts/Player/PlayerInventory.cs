@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer
+public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer, IEquipTarget
 {
     /// <summary>
     /// 실제 인벤토리 데이터
@@ -19,6 +19,21 @@ public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer
     /// 이 인벤토리에 저장된 돈
     /// </summary>
     int money = 0;
+
+    /// <summary>
+    /// 장비 아이템의 부위별 장비 상태
+    /// </summary>
+    InvenSlot[] partsSlot;
+
+    /// <summary>
+    /// 무기 장비할 트랜스폼
+    /// </summary>
+    Transform weaponParent;
+
+    /// <summary>
+    /// 방패 장비할 트랜스폼
+    /// </summary>
+    Transform shieldParent;
 
     /// <summary>
     /// 인벤토리를 읽기 위한 프로퍼티
@@ -42,9 +57,46 @@ public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer
     }
 
     /// <summary>
+    /// 장비 아이템의 부위별 상태 확인 및 설정용 인덱서
+    /// </summary>
+    /// <param name="part">확인할 아이템 종류</param>
+    /// <returns>null이면 장비되어 있지 않음, null이 아니면 해당 슬롯에 있는 아이템이 장비되어 있음</returns>
+    public InvenSlot this[EquipType part]
+    {
+        get => partsSlot[(int)part];
+        private set
+        {
+            partsSlot[(int)part] = value;
+        }
+    }
+
+    /// <summary>
     /// 돈에 변화가 있을 때 변화된 금액을 알리는 델리게이트(int:최종 변경 값)
     /// </summary>
     public event Action<int> onMoneyChange;
+
+    void Awake()
+    {
+        Transform child = transform.GetChild(2);    // root
+        child = child.GetChild(0);                  // pelvis
+        child = child.GetChild(0);                  // spine_01
+        child = child.GetChild(0);                  // spine_02
+        Transform spine3 = child.GetChild(0);       // spine_03
+
+        child = spine3.GetChild(1);                 // clavicle_l
+        child = child.GetChild(1);                  // upperarm_l
+        child = child.GetChild(0);                  // lowerarm_l
+        child = child.GetChild(0);                  // hand_l
+        shieldParent = child.GetChild(2);           // weapon_l
+
+        child = spine3.GetChild(2);                 // clavicle_r
+        child = child.GetChild(1);                  // upperarm_r
+        child = child.GetChild(0);                  // lowerarm_r
+        child = child.GetChild(0);                  // hand_r
+        weaponParent = child.GetChild(2);           // weapon_r
+
+        partsSlot = new InvenSlot[Enum.GetValues(typeof(EquipType)).Length];    // EquipType에 들어있는 값 종류의 개수만큼 배열 생성
+    }
 
     /// <summary>
     /// 인벤토리 초기화 함수
@@ -86,5 +138,85 @@ public class PlayerInventory : MonoBehaviour, IInitializable, IMoneyContainer
                 }                
             }
         }
+    }
+
+    /// <summary>
+    /// 아이템을 장비하는 함수
+    /// </summary>
+    /// <param name="part">장비할 부위</param>
+    /// <param name="slot">장비할 아이템이 들어있는 슬롯</param>
+    public void EquipItem(EquipType part, InvenSlot slot)
+    {
+        ItemData_Equip equipItem = slot.ItemData as ItemData_Equip;
+        if (equipItem != null)
+        {
+            Transform partParent = GetEquipParentTransform(part);
+            GameObject obj = Instantiate(equipItem.equipPrefab, partParent);
+            this[part] = slot;
+            slot.IsEquipped = true;
+
+            float power = 0;
+            switch (part)
+            {
+                case EquipType.Weapon:
+                    ItemData_Weapon weapon = equipItem as ItemData_Weapon;
+                    power = weapon.attackPower;
+                    break;
+                case EquipType.Shield:
+                    ItemData_Shield shield = equipItem as ItemData_Shield;
+                    power = shield.defencePower;
+                    break;
+            }
+            GameManager.Instance.Status.SetEquipPower(part, power);
+            Debug.Log($"플레이어 공격력 : {GameManager.Instance.Status.AttackPower}");
+            Debug.Log($"플레이어 방어력 : {GameManager.Instance.Status.DefencePower}");
+        }
+    }
+
+    /// <summary>
+    /// 아이템을 장비 해제하는 함수
+    /// </summary>
+    /// <param name="part">장비 해제할 부위</param>
+    public void UnEquipItem(EquipType part)
+    {
+        InvenSlot slot = partsSlot[(int)part];
+        if(slot != null)
+        {
+            Transform partParent = GetEquipParentTransform(part);
+            while(partParent.childCount > 0)
+            {
+                Transform child = partParent.GetChild(0);
+                child.SetParent(null);
+                Destroy(child.gameObject);
+            }
+            slot.IsEquipped = false;
+            this[part] = null;
+
+            GameManager.Instance.Status.SetEquipPower(part, 0);
+            Debug.Log($"플레이어 공격력 : {GameManager.Instance.Status.AttackPower}");
+            Debug.Log($"플레이어 방어력 : {GameManager.Instance.Status.DefencePower}");
+        }
+    }
+
+    /// <summary>
+    /// 장비될 아이템이 추가될 부모 트랜스폼을 찾아주는 함수
+    /// </summary>
+    /// <param name="part">장비될 부위</param>
+    /// <returns>장비될 부위의 부모 트랜스폼</returns>
+    public Transform GetEquipParentTransform(EquipType part)
+    {
+        Transform result = null;
+
+        switch (part)
+        {
+            case EquipType.Weapon:
+                result = weaponParent;
+                break;
+            case EquipType.Shield:
+                result = shieldParent;
+                break;
+        }
+
+        return result;
     }
 }

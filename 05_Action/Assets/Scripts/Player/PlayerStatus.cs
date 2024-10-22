@@ -32,6 +32,26 @@ public class PlayerStatus : MonoBehaviour, IHealth, IMana
     float maxMP = 100.0f;
 
     /// <summary>
+    /// 플레이어의 기본 공격력
+    /// </summary>
+    public float baseAttackPower = 5.0f;
+
+    /// <summary>
+    /// 플레이어의 기본 방어력
+    /// </summary>
+    public float baseDefencePower = 1.0f;
+
+    /// <summary>
+    /// 플레이어의 장비 공격력
+    /// </summary>
+    float attackEquipPower = 5.0f;
+
+    /// <summary>
+    /// 플레이어의 장비 방어력
+    /// </summary>
+    float defenceEquipPower = 1.0f;
+        
+    /// <summary>
     /// 플레이어의 HP를 확인하고 설정하기 위한 프로퍼티(설정은 private)
     /// </summary>
     public float HP
@@ -85,6 +105,16 @@ public class PlayerStatus : MonoBehaviour, IHealth, IMana
     /// 최대 MP를 확인하기 위한 프로퍼티
     /// </summary>
     public float MaxMP => maxMP;
+
+    /// <summary>
+    /// 플레이어의 최종 공격력을 확인하기 위한 프로퍼티
+    /// </summary>
+    public float AttackPower => baseAttackPower + attackEquipPower;
+
+    /// <summary>
+    /// 플레이어의 최종 방어력을 확인하기 위한 프로퍼티
+    /// </summary>
+    public float DefencePower => baseDefencePower + defenceEquipPower;
 
     /// <summary>
     /// HP의 변화를 알리는 델리게이트
@@ -220,5 +250,23 @@ public class PlayerStatus : MonoBehaviour, IHealth, IMana
     public void Die()
     {
         Debug.Log("사망");
+    }
+
+    /// <summary>
+    /// 장비의 능력치를 적용하는 함수
+    /// </summary>
+    /// <param name="equipType">장비의 종류</param>
+    /// <param name="power">능력치</param>
+    public void SetEquipPower(EquipType equipType, float power)
+    {
+        switch (equipType)
+        {
+            case EquipType.Weapon:
+                attackEquipPower = power;
+                break;
+            case EquipType.Shield:
+                defenceEquipPower = power;
+                break;
+        }
     }
 }
