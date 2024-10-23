@@ -14,10 +14,6 @@ public class PatrolState : IState
 
     readonly int Move_Hash = Animator.StringToHash("Move");
 
-    public EnemyState State => EnemyState.Patrol;
-
-    public event Action<EnemyState> onTransitionEvent;
-
     public PatrolState(EnemyStateMachine enemyStateMachine)
     {
         stateMachine = enemyStateMachine;
@@ -37,14 +33,22 @@ public class PatrolState : IState
 
     public void Exit()
     {
+        Debug.Log("Patrol 상태 나감");
     }
 
     public void Update()
     {
-        if( agent.remainingDistance <= agent.stoppingDistance )
+        if (stateMachine.SearchPlayer(out Vector3 target))
         {
-            waypoints.StepNextWaypoint();
-            onTransitionEvent?.Invoke(EnemyState.Wait);
+            stateMachine.TransitionToChase();
+        }
+        else
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                waypoints.StepNextWaypoint();
+                stateMachine.TransitionToWait();
+            }
         }
     }
 }

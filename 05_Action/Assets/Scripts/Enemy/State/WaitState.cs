@@ -16,16 +16,13 @@ public class WaitState : IState
 
     readonly int Stop_Hash = Animator.StringToHash("Stop");
 
-    public EnemyState State => EnemyState.Wait;
-
-    public event Action<EnemyState> onTransitionEvent;
-
     public WaitState(EnemyStateMachine enemyStateMachine)
     {
         stateMachine = enemyStateMachine;
         agent = stateMachine.Agent;
         animator = stateMachine.Animator;
-        waitTime = stateMachine.WaitTime;            
+        waitTime = stateMachine.WaitTime;
+        waitCounter = waitTime;
     }
 
     public void Enter()
@@ -39,14 +36,22 @@ public class WaitState : IState
 
     public void Exit()
     {
+        Debug.Log("Wait 상태 나감");
     }
 
     public void Update()
     {
-        waitCounter -= Time.deltaTime;
-        if (waitCounter < 0)
+        if(stateMachine.SearchPlayer(out Vector3 target))
         {
-            onTransitionEvent?.Invoke(EnemyState.Patrol);
+            stateMachine.TransitionToChase();
+        }
+        else
+        {
+            waitCounter -= Time.deltaTime;
+            if (waitCounter < 0)
+            {
+                stateMachine.TransitionToPatrol();
+            }
         }
     }
 }

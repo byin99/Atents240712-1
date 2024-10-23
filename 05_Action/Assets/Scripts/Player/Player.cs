@@ -5,6 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputController))]
 [RequireComponent(typeof(PlayerMovement), typeof(PlayerAttack), typeof(PlayerInventory))]
+[RequireComponent(typeof(PlayerStatus))]
 public class Player : MonoBehaviour
 {
     /// <summary>
