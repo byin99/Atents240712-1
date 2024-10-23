@@ -1,22 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyStateMachine : MonoBehaviour
-{
-    /// <summary>
-    /// 상태의 종류를 나타내는 enum
-    /// </summary>
-    enum EnemyState : byte
-    {
-        Wait = 0,
-        Patrol,
-        Chase,
-        Attack,
-        Dead
-    }
-
+{ 
     /// <summary>
     /// 대기 상태로 들어갔을 때 기다리는 시간
     /// </summary>
@@ -33,114 +23,92 @@ public class EnemyStateMachine : MonoBehaviour
     public Waypoints waypoints;
 
     /// <summary>
-    /// 원거리 시야 범위
-    /// </summary>
-    public float farSightRange = 10.0f;
-
-    /// <summary>
-    /// 원거리 시야각의 절반
-    /// </summary>
-    public float sightHalfAngle = 50.0f;
-
-    /// <summary>
-    /// 근거리 시야범위
-    /// </summary>
-    public float nearSightRange = 1.5f;
-
-    /// <summary>
     /// 적의 현재 상태
     /// </summary>
-    EnemyState state = EnemyState.Patrol;
+    IState state = null;
 
     /// <summary>
     /// 대기 시간 측정용 변수(계속 감소)
     /// </summary>
     float waitTimer = 1.0f;
 
-    /// <summary>
-    /// 추적 대상
-    /// </summary>
-    Transform chaseTarget = null;
-
-    /// <summary>
-    /// 공격 대상
-    /// </summary>
-    IBattler attackTarget = null;
 
     /// <summary>
     /// 적의 현재 상태를 설정하고 확인하기 위한 프로퍼티
     /// </summary>
-    EnemyState State
+    IState State
     {
         get => state;
         set
         {
             if(state != value)
             {
-                switch (state)
-                {
-                    case EnemyState.Wait:
-                        onStateUpdate = Update_Wait;
-                        break;
-                    case EnemyState.Patrol:
-                        onStateUpdate = Update_Patrol;
-                        break;
-                    case EnemyState.Chase:
-                        onStateUpdate = Update_Chase;
-                        break;
-                    case EnemyState.Attack:
-                        onStateUpdate = Update_Attack;
-                        break;
-                    case EnemyState.Dead:
-                        onStateUpdate = Update_Die;
-                        break;                    
-                }
+                state.Exit();
+                state = value;
+                state.Enter();
             }
         }
     }
 
-    /// <summary>
-    /// 대기 시간 측정 처리용 프로퍼티
-    /// </summary>
-    float WaitTimer
+    WaitState waitState;
+    PatrolState patrolState;
+
+    NavMeshAgent agent;
+    Animator animator;
+
+    public float WaitTime => waitTime;
+
+    public Waypoints Waypoints => waypoints;
+
+    public NavMeshAgent Agent => agent;
+    public Animator Animator => animator;
+
+    private void Awake()
     {
-        get => waitTimer;
-        set
-        {
-            waitTimer = value;
-            if (waitTimer < 0.0f)
-            {
-                State = EnemyState.Patrol;  // 대기시간이 끝나면 무조건 patrol 상태로 변환
-            }
-        }
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
 
-    Action onStateUpdate;
+    private void Start()
+    {
+        waitState = new WaitState(this);
+        patrolState = new PatrolState(this);
+        waitState.onTransitionEvent += OnTransitionEvent;
+        patrolState.onTransitionEvent += OnTransitionEvent;
+
+        state = waitState;  // 처음이라
+        state.Enter();
+    }
+
+    private void OnTransitionEvent(EnemyState targetState)
+    {
+        State = GetState(targetState);
+    }
 
     private void Update()
-    {        
-        onStateUpdate();
+    {
+        state.Update();        
     }
 
-    void Update_Wait()
+    IState GetState(EnemyState state)
     {
-    }
+        IState result = null;
+        switch (state)
+        {
+            case EnemyState.Wait:
+                result = waitState;
+                break;
+            case EnemyState.Patrol:
+                result = patrolState;
+                break;
+            case EnemyState.Chase:
+                break;
+            case EnemyState.Attack:
+                break;
+            case EnemyState.Dead:
+                break;
+        }
 
-    void Update_Patrol()
-    {
-    }
-
-    void Update_Chase()
-    {
-    }
-
-    void Update_Attack()
-    {
-
-    }
-
-    void Update_Die()
-    {
-
+        return result;
     }
 }

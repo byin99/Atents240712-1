@@ -835,10 +835,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waitTime: 1
   moveSpeed: 3
-  waypoints: {fileID: 0}
-  farSightRange: 10
-  sightHalfAngle: 50
-  nearSightRange: 1.5
+  waypoints: {fileID: 206121058}
 --- !u!114 &95457532368509271
 MonoBehaviour:
   m_ObjectHideFlags: 0
