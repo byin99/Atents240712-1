@@ -5,142 +5,93 @@ using UnityEngine;
 
 public class EnemyStateMachine : MonoBehaviour
 {
-    /// <summary>
-    /// 상태의 종류를 나타내는 enum
-    /// </summary>
-    enum EnemyState : byte
-    {
-        Wait = 0,
-        Patrol,
-        Chase,
-        Attack,
-        Dead
-    }
+    // 대기 상태용 변수 및 프로퍼티들 --------------------------------------------------------------
 
     /// <summary>
     /// 대기 상태로 들어갔을 때 기다리는 시간
     /// </summary>
-    public float waitTime = 1.0f;
+    [SerializeField]
+    float waitTime = 1.0f;
+        
+    public float WaitTime => waitTime;
+
+    //----------------------------------------------------------------------------------------------
+
 
     /// <summary>
-    /// 이동 속도
+    /// 현재 상태
     /// </summary>
-    public float moveSpeed = 3.0f;
+    IState state;
+
+    // 전체 상태들
+    StateWait wait;     // 대기 상태
+    StatePatrol patrol; // 순찰 상태
+    StateChase chase;   // 추적 상태
+
+    // 각종 컴포넌트들
+    Animator animator;
 
     /// <summary>
-    /// 적이 순찰할 웨이포인트(사실상 private)
+    /// 현재 상태를 확인하기 위한 프로퍼티
     /// </summary>
-    public Waypoints waypoints;
+    public IState State => state;
 
-    /// <summary>
-    /// 원거리 시야 범위
-    /// </summary>
-    public float farSightRange = 10.0f;
+    public Animator Animator => animator;
 
-    /// <summary>
-    /// 원거리 시야각의 절반
-    /// </summary>
-    public float sightHalfAngle = 50.0f;
-
-    /// <summary>
-    /// 근거리 시야범위
-    /// </summary>
-    public float nearSightRange = 1.5f;
-
-    /// <summary>
-    /// 적의 현재 상태
-    /// </summary>
-    EnemyState state = EnemyState.Patrol;
-
-    /// <summary>
-    /// 대기 시간 측정용 변수(계속 감소)
-    /// </summary>
-    float waitTimer = 1.0f;
-
-    /// <summary>
-    /// 추적 대상
-    /// </summary>
-    Transform chaseTarget = null;
-
-    /// <summary>
-    /// 공격 대상
-    /// </summary>
-    IBattler attackTarget = null;
-
-    /// <summary>
-    /// 적의 현재 상태를 설정하고 확인하기 위한 프로퍼티
-    /// </summary>
-    EnemyState State
+    private void Awake()
     {
-        get => state;
-        set
-        {
-            if(state != value)
-            {
-                switch (state)
-                {
-                    case EnemyState.Wait:
-                        onStateUpdate = Update_Wait;
-                        break;
-                    case EnemyState.Patrol:
-                        onStateUpdate = Update_Patrol;
-                        break;
-                    case EnemyState.Chase:
-                        onStateUpdate = Update_Chase;
-                        break;
-                    case EnemyState.Attack:
-                        onStateUpdate = Update_Attack;
-                        break;
-                    case EnemyState.Dead:
-                        onStateUpdate = Update_Die;
-                        break;                    
-                }
-            }
-        }
+        animator = GetComponent<Animator>();
     }
 
-    /// <summary>
-    /// 대기 시간 측정 처리용 프로퍼티
-    /// </summary>
-    float WaitTimer
+    private void Start()
     {
-        get => waitTimer;
-        set
-        {
-            waitTimer = value;
-            if (waitTimer < 0.0f)
-            {
-                State = EnemyState.Patrol;  // 대기시간이 끝나면 무조건 patrol 상태로 변환
-            }
-        }
-    }
+        wait = new StateWait(this);
+        patrol = new StatePatrol(this);
+        chase = new StateChase(this);
 
-    Action onStateUpdate;
+        state = wait;   // 대기 상태를 현재 상태로 지정
+    }
 
     private void Update()
-    {        
-        onStateUpdate();
+    {
+        state.Update(); // 현재 상태의 Update 함수 실행
     }
 
-    void Update_Wait()
+    /// <summary>
+    /// 현재 상태를 다른 상태로 전이 시키는 함수
+    /// </summary>
+    /// <param name="target">전이할 상태</param>
+    private void TransitionTo(IState target)
     {
+        if(target != null)
+        {
+            state.Exit();   // 이전 상태의 Exit 실행
+            state = target; // 상태를 target으로 변경하고
+            state.Enter();  // 새 상태의 Enter 실행
+        }
     }
 
-    void Update_Patrol()
+    /// <summary>
+    /// 현재 상태를 대기 상태로 전이시키는 함수
+    /// </summary>
+    public void TransitionToWait()
     {
+        TransitionTo(wait);
     }
 
-    void Update_Chase()
+    /// <summary>
+    /// 현재 상태를 순찰 상태로 전이시키는 함수
+    /// </summary>
+    public void TransitionToPatrol()
     {
+        TransitionTo(patrol);
     }
 
-    void Update_Attack()
+    /// <summary>
+    /// 현재 상태를 추적 상태로 전이시키는 함수
+    /// </summary>
+    public void TransitionToChase()
     {
-
-    }
-
-    void Update_Die()
-    {
-
+        TransitionTo(chase);
     }
 }
