@@ -45,10 +45,20 @@ public class StateWait : IState
 
     public void Update()
     {
-        waitCountDown -= Time.deltaTime;    // 매 프레임마다 시간 감소
-        if (waitCountDown < 0)              // 시간이 0이하로 내려가면
+        if( stateMachine.SearchPlayer(out Vector3 _))
         {
-            stateMachine.TransitionToPatrol();  // 순찰상태로 전이
+            // 플레이어를 찾았으면 추적 상태로 전이
+            stateMachine.TransitionToChase();
+        }
+        else
+        {
+            // 플레이어를 못 찾았으면 계속 대기
+
+            waitCountDown -= Time.deltaTime;    // 매 프레임마다 시간 감소
+            if (waitCountDown < 0)              // 시간이 0이하로 내려가면
+            {
+                stateMachine.TransitionToPatrol();  // 순찰상태로 전이
+            }
         }
     }
 }

@@ -249,6 +249,7 @@ public class PlayerStatus : MonoBehaviour, IHealth, IMana
     /// </summary>
     public void Die()
     {
+        onDie?.Invoke();
         Debug.Log("사망");
     }
 
