@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// 대기 상태. 
-/// 1. 상태에 진입하면 지정된 시간동안 대기
+/// 1. 상태에 진입하면 멈춰서 지정된 시간동안 대기
 /// 2. 대기 중에는 두리번 거리는 애니메이션 재생
 /// 3. 대기 시간이 끝나면 StatePatrol 상태로 전이
 /// 4. 대기 시간 중에 플레이어를 발견하면 StateChase 상태로 전이
@@ -26,16 +26,21 @@ public class StateWait : IState
     public StateWait(EnemyStateMachine enemyStateMachine)
     {
         stateMachine = enemyStateMachine;
+        waitCountDown = stateMachine.WaitTime;
     }
 
     public void Enter()
     {
-        waitCountDown = stateMachine.WaitTime;
-        stateMachine.Animator.SetTrigger(Stop_Hash);
+        Debug.Log("상태 진입 - Wait");
+        waitCountDown = stateMachine.WaitTime;          // 대기 시간 초기화
+        stateMachine.Agent.isStopped = true;            // agent 정지
+        stateMachine.Agent.velocity = Vector3.zero;     // agent에 남아있던 운동량(관성) 제거
+        stateMachine.Animator.SetTrigger(Stop_Hash);    // 두리번 거리는 애니메이션 재생
     }
 
     public void Exit()
     {
+        Debug.Log("상태 나감 - Wait");
     }
 
     public void Update()
