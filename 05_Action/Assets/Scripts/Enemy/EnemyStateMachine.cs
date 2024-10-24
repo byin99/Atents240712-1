@@ -22,6 +22,13 @@ public class EnemyStateMachine : MonoBehaviour
 
     //----------------------------------------------------------------------------------------------
 
+    // 순찰 상태용 변수 및 프로퍼티들 --------------------------------------------------------------
+    [SerializeField]
+    Waypoints waypoints;
+
+    public Waypoints Waypoints => waypoints;
+    //----------------------------------------------------------------------------------------------
+
 
 
     // 플레이어 탐색 용 변수들 -----------------------------------------------------------------------
@@ -74,6 +81,7 @@ public class EnemyStateMachine : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
     private void Start()
@@ -137,6 +145,39 @@ public class EnemyStateMachine : MonoBehaviour
     {
         bool result = false;
         position = Vector3.zero;
+
+        // farSightRange안에 있는 Player 레이어인 컬라이더 모두 찾기(1개만 있음)
+        Collider[] colliders = Physics.OverlapSphere(transform.position, farSightRange, LayerMask.GetMask("Player"));
+        if (colliders.Length > 0)   // 찾았으면
+        {
+            IHealth health = colliders[0].GetComponent<IHealth>();  // IHealth 인터페이스로 가져오고
+            if (health != null && health.IsAlive)   // 살아있을 때만 처리
+            {
+                // 원거리 범위안에 플레이어가 살아있는 상태로 있다.
+
+                Vector3 playerPos = colliders[0].transform.position;    // 플레이어 위치 찾기
+                Vector3 toPlayerDir = playerPos - transform.position;   // 슬라임->플레이어로 가는 방향 벡터
+                if (toPlayerDir.sqrMagnitude < nearSightRange * nearSightRange)
+                {
+                    // 근거리 범위에 플레이어가 있다.
+                    position = playerPos;
+                    result = true;
+                }
+                else
+                {
+                    // (근거리 범위 밖 ~ 원거리 범위 안) 사이에 플레이어가 있다.
+                    if (IsInSightAngle(toPlayerDir))    // 시야각 안에 있는지 확인
+                    {
+                        if (IsSightClear(toPlayerDir))   // 시야각 안에 있으면 중간에 가리는 물체가 있는지 확인
+                        {
+                            position = playerPos;
+                            result = true;
+                        }
+                    }
+                }
+            }
+        }
+
         return result;
     }
 
@@ -146,8 +187,9 @@ public class EnemyStateMachine : MonoBehaviour
     /// <param name="toTargetDir">슬라임이 플레이어를 바라보는 방향 벡터</param>
     /// <returns>시야각 안에 있으면 true, 없으면 false</returns>
     bool IsInSightAngle(Vector3 toTargetDir)
-    {
-        return false;
+    { 
+        float angle = Vector3.Angle(transform.forward, toTargetDir);
+        return sightHalfAngle > angle;  // sightHalfAngle보다 angle이 작아야 시야각 안이다.
     }
 
     /// <summary>
@@ -157,7 +199,17 @@ public class EnemyStateMachine : MonoBehaviour
     /// <returns>true면 슬라임과 플레이어 사이에 다른 오브젝트가 없다. false면 다른 오브젝트가 가리고 있다.</returns>
     bool IsSightClear(Vector3 toTargetDir)
     {
-        return false;
+        bool result = false;
+        Ray ray = new Ray(transform.position + transform.up * 0.5f, toTargetDir);
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, farSightRange))
+        {
+            //hitInfo.collider.gameObject.layer == LayerMask.GetMask("Player")
+            if (hitInfo.collider.CompareTag("Player"))  // 처음 레이와 닿은 것이 플레이어이면
+            {
+                result = true;  // 가리는 물체가 없다.
+            }
+        }
+        return result;
     }
 
 #if UNITY_EDITOR
